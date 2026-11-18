@@ -15,4 +15,12 @@ jobs:
           java-version: '25'
       - uses: gradle/actions/setup-gradle@v4
       - run: chmod +x gradlew
-      - run: ./gradlew --no-daemon --console=plain build
+      - run: ./gradlew --no-daemon --console=plain build --stacktrace
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            build/reports
+            */build/reports
+          if-no-files-found: ignore
