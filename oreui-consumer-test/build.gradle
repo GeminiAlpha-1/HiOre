@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(':oreui-core')
+    implementation project(':oreui-layout')
+    implementation project(':oreui-theme')
+    implementation project(':oreui-components')
+}

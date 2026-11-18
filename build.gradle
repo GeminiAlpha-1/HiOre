@@ -1,0 +1,120 @@
+plugins {
+    id 'java'
+    id 'checkstyle'
+    // Loom is resolved once at the root; only adapter/testmod apply it.
+    id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
+}
+
+version = project.mod_version
+group = project.maven_group
+
+allprojects {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'checkstyle'
+
+    group = rootProject.group
+    version = rootProject.version
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(rootProject.java_version as int)
+        }
+        withSourcesJar()
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = rootProject.java_version as int
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ['-Xlint:all', '-Werror']
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+
+    checkstyle {
+        toolVersion = '10.21.4'
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+        configDirectory = rootProject.file('config/checkstyle')
+    }
+
+    tasks.withType(Checkstyle).configureEach {
+        configDirectory = rootProject.file('config/checkstyle')
+        reports {
+            xml.required = true
+            html.required = true
+        }
+    }
+
+    def publishable = ['oreui-core', 'oreui-layout', 'oreui-theme', 'oreui-components', 'oreui-adapter-262']
+    if (publishable.contains(project.name)) {
+        apply plugin: 'maven-publish'
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    from components.java
+                    artifactId project.name
+                    pom {
+                        name = project.name
+                        description = 'OreUI-style UI library for Minecraft Java 26.2 (Fabric)'
+                    }
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation "com.tngtech.archunit:archunit-junit5:1.5.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.14.4"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.14.4"
+    testImplementation project(':oreui-core')
+    testImplementation project(':oreui-layout')
+    testImplementation project(':oreui-theme')
+    testImplementation project(':oreui-components')
+    testImplementation project(':oreui-consumer-test')
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('verifyDocs') {
+    group = 'verification'
+    description = 'Enforces the five-file Markdown whitelist at the repository root.'
+    doLast {
+        def root = rootProject.projectDir
+        def allowed = ['README.md', 'AGENTS.md', 'PLAN.md', 'DESIGN_SYSTEM.md', 'ARCHITECTURE_INDEX.md'] as Set
+        def offenders = []
+        root.eachFileRecurse { file ->
+            if (!file.isFile() || !file.name.toLowerCase(Locale.ROOT).endsWith('.md')) {
+                return
+            }
+            def rel = root.toPath().relativize(file.toPath()).toString().replace('\\', '/')
+            if (rel.startsWith('build/') || rel.startsWith('.gradle/') || rel.startsWith('run/')
+                    || rel.startsWith('.arts/') || rel.startsWith('.codeartsdoer/')) {
+                return
+            }
+            if (!rel.contains('/') && allowed.contains(rel)) {
+                return
+            }
+            offenders << rel
+        }
+        if (!offenders.isEmpty()) {
+            throw new GradleException("Markdown whitelist violation (only root AGENTS/PLAN/DESIGN_SYSTEM/ARCHITECTURE_INDEX/README allowed): ${offenders}")
+        }
+        logger.lifecycle("verifyDocs: OK")
+    }
+}
+
+check.dependsOn verifyDocs

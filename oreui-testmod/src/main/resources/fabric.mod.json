@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "oreui-testmod",
+  "version": "${version}",
+  "name": "OreUI Testmod",
+  "description": "Development-only gallery host for HiOre.",
+  "authors": [
+    "HiOre"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.oreui.testmod.OreUIGalleryClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.20.1",
+    "fabric-api": "*",
+    "minecraft": "~26.2"
+  }
+}

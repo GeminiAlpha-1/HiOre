@@ -1,0 +1,19 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'oreui'
+include 'oreui-core'
+include 'oreui-layout'
+include 'oreui-theme'
+include 'oreui-components'
+include 'oreui-adapter-262'
+include 'oreui-testmod'
+include 'oreui-consumer-test'

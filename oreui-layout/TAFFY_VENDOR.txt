@@ -1,0 +1,19 @@
+Taffy-Java vendored subset
+==========================
+
+Upstream : https://github.com/vfyjxf/taffy-java
+Commit   : b594b52da83f60ca2b48db4d8b30e6889107c903
+Version  : 1.1.4
+License  : MIT (see TAFFY_LICENSE.txt)
+
+Vendored path:
+  oreui-layout/src/main/java/dev/vfyjxf/taffy/
+
+Modifications:
+  - TaffyTree primitive maps replaced by java.util.HashMap to remove the
+    fastutil dependency and keep oreui-layout free of third-party runtime jars.
+  - LayoutCache/TaffyException warning suppressions added for the project's
+    -Xlint:all -Werror build.
+  - CSS Grid is disabled via a GridComputer stub. Phase 3 only requires Flex
+    and Block layout; the full GridComputer (and its fastutil use) is not vendored.
+  - Upstream tests and JMH sources are not vendored.

@@ -1,0 +1,31 @@
+# Gradle / build output
+build/
+*/build/
+.gradle/
+!.gradle/wrapper/
+
+# Local run directories (worlds, logs, options, usercache, screenshots)
+run/
+*/run/
+
+# Local IDE / agent state (may contain machine-specific or private data)
+.idea/
+.vscode/
+.arts/
+.codeartsdoer/
+
+# Test logs and generated evidence (kept locally only)
+*.log
+logs/
+crash-reports/
+screenshots/
+
+# Development-only documents (not published)
+AGENTS.md
+PLAN.md
+DESIGN_SYSTEM.md
+ARCHITECTURE_INDEX.md
+
+# OS noise
+.DS_Store
+Thumbs.db

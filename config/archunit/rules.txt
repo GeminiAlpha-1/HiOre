@@ -1,0 +1,23 @@
+HiOre ArchUnit guard rules
+==========================
+
+Implementation : src/test/java/dev/oreui/arch/ModuleBoundaryTest.java
+Negative proof : src/test/java/dev/oreui/arch/ArchRuleNegativeTest.java
+Fixtures       : src/test/java/dev/oreui/core/fixture, layout/fixture, theme/fixture,
+                 components/fixture, consumertest/ConsumerLeak, adapter262/fixture
+
+Executed by    : ./gradlew check (root :test, JUnit 5 + ArchUnit 1.5.1)
+
+Rules
+-----
+1. core/api depend only on JDK; no Minecraft, Mojang, Fabric, AWT or Swing.
+2. core/api do not depend on layout, theme, components or adapter262.
+3. layout depends only on core (no game, theme, components or adapter).
+4. theme depends only on core (no game, layout, components or adapter).
+5. components are game-free and never depend on adapter262.
+6. code outside components.internal never depends on components.internal.
+7. consumer-test depends only on dev.oreui.api (no core/layout/theme/components/adapter).
+8. adapter262 never depends on components.internal.
+
+Fixtures are excluded from the automatic scan by ExcludeTestFixtures and are
+imported explicitly by ArchRuleNegativeTest, which asserts each rule throws.

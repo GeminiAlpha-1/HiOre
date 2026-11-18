@@ -1,0 +1,69 @@
+plugins {
+    id 'net.fabricmc.fabric-loom'
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        'oreui-testmod' {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+
+    runs {
+        client {
+            if (project.hasProperty('oruiGuiScale')) {
+                vmArg "-Dorui.guiScale=${project.property('oruiGuiScale')}"
+            }
+            if (project.hasProperty('oruiWidth')) {
+                programArgs '--width', project.property('oruiWidth').toString()
+            }
+            if (project.hasProperty('oruiHeight')) {
+                programArgs '--height', project.property('oruiHeight').toString()
+            }
+            if (project.hasProperty('oruiBackend')) {
+                programArgs '--graphicsBackend', project.property('oruiBackend').toString()
+            }
+            if (project.hasProperty('oruiSmoke')) {
+                vmArg "-Dorui.smoke=${project.property('oruiSmoke')}"
+            }
+            if (project.hasProperty('oruiShot')) {
+                vmArg "-Dorui.shot=${project.property('oruiShot')}"
+            }
+            if (project.hasProperty('oruiWorld')) {
+                vmArg "-Dorui.world=${project.property('oruiWorld')}"
+            }
+            if (project.hasProperty('oruiV2')) {
+                vmArg "-Dorui.v2=${project.property('oruiV2')}"
+            }
+            if (System.getProperty('orui.smoke') != null) {
+                vmArg "-Dorui.smoke=${System.getProperty('orui.smoke')}"
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    implementation project(':oreui-adapter-262')
+    implementation project(':oreui-core')
+}
+
+processResources {
+    inputs.property 'version', project.version
+    from(rootProject.file('oreui-adapter-262/src/main/resources')) {
+        include 'assets/oreui/shaders/**'
+    }
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}
+
+
+check.dependsOn checkstyleClient
