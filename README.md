@@ -21,7 +21,7 @@ Bedrock OreUI-style UI library for **Minecraft Java Edition 26.2** on Fabric. Cl
 | Item | Version |
 | :--- | :--- |
 | Minecraft Java Edition | 26.2 |
-| Fabric Loader | 0.20.1 |
+| Fabric Loader | 0.19.5 |
 | Fabric API | 0.161.0+26.2 |
 | Fabric Loom | 1.19.4 (`net.fabricmc.fabric-loom`) |
 | Java | 25 (toolchain) |
