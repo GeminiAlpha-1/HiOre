@@ -1,0 +1,21 @@
+HiOre (OreUI for Fabric)
+Copyright (C) 2026 HiOre contributors
+
+This project is licensed under the GNU Lesser General Public License,
+version 3 only. See the LICENSE file for the full text.
+
+Third-party components
+----------------------
+- taffy-java (dev.vfyjxf.taffy), vendored at commit b594b52, MIT License.
+  See oreui-layout/TAFFY_LICENSE.txt and oreui-layout/TAFFY_VENDOR.txt.
+
+Visual references
+-----------------
+- katorlys/OreUI (MPL-2.0) and Mojang/ore-ui (MIT) are referenced for visual
+  direction only. No assets, textures, fonts, audio or source code from those
+  projects are bundled.
+
+Trademarks
+----------
+Minecraft is a trademark of Mojang Studios. This project is not affiliated
+with, endorsed by, or sponsored by Mojang Studios or Microsoft.

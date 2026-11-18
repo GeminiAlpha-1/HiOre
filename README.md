@@ -134,4 +134,6 @@ World smoke binds real `ItemStack`s and renders the item grid:
 
 ## License and disclaimer
 
-MIT. This project is not affiliated with, endorsed by, or sponsored by Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios. No Bedrock Edition assets (`oreui`, `gui/dist/hbui` textures, fonts or audio) are extracted or bundled; all visuals are original or used under a permissive license.
+LGPL-3.0-only. See [LICENSE](LICENSE). Vendored taffy code remains under its original MIT license (see `oreui-layout/TAFFY_LICENSE.txt`).
+
+This project is not affiliated with, endorsed by, or sponsored by Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios. No Bedrock Edition assets (`oreui`, `gui/dist/hbui` textures, fonts or audio) are extracted or bundled; all visuals are original or used under a permissive license.
