@@ -10,16 +10,16 @@ public final class OreIcon extends OreWidget {
             0b10001000, 0b01010000, 0b00100000, 0b00000000,
     };
     private static final int[] CHEVRON_DOWN = {
-            0b00000000, 0b00000000, 0b00000000, 0b10000001,
-            0b01000010, 0b00100100, 0b00011000, 0b00000000,
+            0b00000000, 0b00000000, 0b10000001, 0b01000010,
+            0b00100100, 0b00011000, 0b00000000, 0b00000000,
     };
     private static final int[] CLOSE = {
-            0b10000010, 0b01000100, 0b00101000, 0b00010000,
-            0b00101000, 0b01000100, 0b10000010, 0b00000000,
+            0b10000001, 0b01000010, 0b00100100, 0b00011000,
+            0b00011000, 0b00100100, 0b01000010, 0b10000001,
     };
     private static final int[] SEARCH = {
-            0b00111000, 0b01000100, 0b01000100, 0b00111000,
-            0b00000100, 0b00000010, 0b00000000, 0b00000000,
+            0b01110000, 0b10001000, 0b10001000, 0b10001000,
+            0b01111000, 0b00000100, 0b00000010, 0b00000001,
     };
     private static final int[] DOT = {
             0b00000000, 0b00000000, 0b00111100, 0b00111100,
@@ -38,9 +38,10 @@ public final class OreIcon extends OreWidget {
 
     @Override
     public void renderBackground(IRenderContext ctx) {
-        float x = bounds().x();
-        float y = bounds().y();
-        float cell = Math.max(1f, size / (float) GRID);
+        int cell = Math.max(1, size / GRID);
+        float iconSize = (float) cell * GRID;
+        float originX = Math.round(bounds().x() + (bounds().width() - iconSize) * 0.5f);
+        float originY = Math.round(bounds().y() + (bounds().height() - iconSize) * 0.5f);
         int[] rows = switch (kind) {
             case CHECK -> CHECK;
             case CHEVRON_DOWN -> CHEVRON_DOWN;
@@ -53,7 +54,7 @@ public final class OreIcon extends OreWidget {
             int bits = rows[row];
             for (int col = 0; col < GRID; col++) {
                 if ((bits & (1 << (GRID - 1 - col))) != 0) {
-                    fill(ctx, role, x + col * cell, y + row * cell, cell, cell);
+                    fill(ctx, role, originX + col * cell, originY + row * cell, cell, cell);
                 }
             }
         }

@@ -11,12 +11,12 @@ import java.util.List;
 public final class OreDropdown extends OreInteractive {
     private static final int ICON_GRID = 8;
     private static final int[] CHEVRON_DOWN = {
-            0b00000000, 0b00000000, 0b00000000, 0b10000001,
-            0b01000010, 0b00100100, 0b00011000, 0b00000000,
+            0b00000000, 0b00000000, 0b10000001, 0b01000010,
+            0b00100100, 0b00011000, 0b00000000, 0b00000000,
     };
     private static final int[] CHEVRON_UP = {
-            0b00000000, 0b00011000, 0b00100100, 0b01000010,
-            0b10000001, 0b00000000, 0b00000000, 0b00000000,
+            0b00000000, 0b00000000, 0b00011000, 0b00100100,
+            0b01000010, 0b10000001, 0b00000000, 0b00000000,
     };
 
     private final List<IText> items;
@@ -111,8 +111,8 @@ public final class OreDropdown extends OreInteractive {
         fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 1f, bounds().y() + 1f, bounds().width() - 2f, 1f);
         fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 1f, bounds().y() + bounds().height() - 1f,
                 bounds().width() - 2f, 1f);
-        float arrowX = bounds().x() + bounds().width() - 18f;
-        float arrowY = bounds().y() + (bounds().height() - ICON_GRID) * 0.5f;
+        float arrowX = Math.round(bounds().x() + bounds().width() - 18f);
+        float arrowY = Math.round(bounds().y() + (bounds().height() - ICON_GRID) * 0.5f);
         int[] arrow = open ? CHEVRON_UP : CHEVRON_DOWN;
         for (int row = 0; row < ICON_GRID; row++) {
             int bits = arrow[row];
@@ -185,7 +185,7 @@ public final class OreDropdown extends OreInteractive {
                         TypeRole.LABEL, i == owner.selected()
                                 ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_SECONDARY);
                 if (i == owner.selected()) {
-                    float tickX = bounds().right() - 12f;
+                    float tickX = Math.round(bounds().right() - 18f);
                     float tickY = itemY + 5f;
                     fill(ctx, ColorRole.TEXT_PRIMARY, tickX, tickY + 2f, 2f, 2f);
                     fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 2f, tickY + 4f, 2f, 2f);
