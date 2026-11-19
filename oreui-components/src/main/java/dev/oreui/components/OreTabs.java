@@ -72,11 +72,12 @@ public final class OreTabs extends OreInteractive {
             if (orientation == Orientation.HORIZONTAL) {
                 float tabWidth = bounds().width() / labels.size();
                 x = bounds().x() + i * tabWidth + (tabWidth - metrics.width()) * 0.5f;
-                y = textCenterY(bounds().y(), bounds().height(), metrics);
+                y = textCenterY(bounds().y() + 1f, Math.max(1f, bounds().height() - 2f), metrics);
             } else {
                 float tabHeight = bounds().height() / labels.size();
                 x = bounds().x() + 6f;
-                y = textCenterY(bounds().y() + i * tabHeight, tabHeight, metrics);
+                y = textCenterY(bounds().y() + i * tabHeight + 1f,
+                        Math.max(1f, tabHeight - 2f), metrics);
             }
             text(ctx, label, x, y, TypeRole.LABEL,
                     i == selected ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_MUTED);

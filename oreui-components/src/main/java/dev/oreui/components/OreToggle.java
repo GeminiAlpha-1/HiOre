@@ -1,16 +1,11 @@
 package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
-import dev.oreui.core.anim.Easings;
-import dev.oreui.core.anim.Tween;
 import dev.oreui.theme.ColorRole;
-import dev.oreui.theme.ControlState;
-import dev.oreui.theme.Motion;
 import dev.oreui.theme.SoundRole;
 
 public final class OreToggle extends OreInteractive {
     private boolean on;
-    private final Tween knob = new Tween(0f, Motion.FAST.millis() / 1000f, Easings.ORE_STANDARD);
 
     public OreToggle(ComponentContext context) {
         super(context);
@@ -23,14 +18,6 @@ public final class OreToggle extends OreInteractive {
 
     public void setOn(boolean on) {
         this.on = on;
-        knob.snapToTarget();
-        knob.setTarget(on ? 1f : 0f);
-    }
-
-    @Override
-    public void update(float deltaSeconds) {
-        knob.advance(deltaSeconds);
-        super.update(deltaSeconds);
     }
 
     @Override
@@ -41,20 +28,21 @@ public final class OreToggle extends OreInteractive {
 
     @Override
     public void renderBackground(IRenderContext ctx) {
-        float x = bounds().x();
-        float y = bounds().y();
-        float w = bounds().width();
-        float h = bounds().height();
-        fill(ctx, on ? ColorRole.ACCENT_DEFAULT : ColorRole.SURFACE_SUNKEN, x, y, w, h);
-        outline(ctx, ColorRole.BORDER_OUTER, x, y, w, h, 1f);
-        fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, w - 2f, 1f);
-        fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + h - 2f, w - 2f, 1f);
-        float knobX = x + 2f + (w - 14f) * knob.value();
-        float knobY = y + 2f;
-        fill(ctx, ColorRole.SURFACE_RAISED_DEFAULT, knobX, knobY, 10f, h - 4f);
-        outline(ctx, ColorRole.BORDER_OUTER, knobX, knobY, 10f, h - 4f, 1f);
-        fill(ctx, ColorRole.BEVEL_LIGHT, knobX + 1f, knobY + 1f, 8f, 1f);
-        fill(ctx, ColorRole.BEVEL_DARK, knobX + 1f, knobY + h - 6f, 8f, 1f);
+        float ox = bounds().x() + (bounds().width() - 28f) * 0.5f;
+        float oy = bounds().y() + (bounds().height() - 15f) * 0.5f;
+        float trackX = on ? ox : ox + 15f;
+        float trackY = oy + 1f;
+        fill(ctx, ColorRole.BORDER_OUTER, trackX, trackY, 13f, 13f);
+        fill(ctx, on ? ColorRole.ACCENT_HIGHLIGHT : ColorRole.SWITCH_TRACK_HIGHLIGHT,
+                trackX + 1f, trackY + 1f, 11f, 11f);
+        fill(ctx, on ? ColorRole.ACCENT_DEFAULT : ColorRole.SWITCH_TRACK,
+                trackX + 2f, trackY + 2f, 9f, 9f);
+
+        float thumbX = on ? ox + 13f : ox;
+        fill(ctx, ColorRole.BORDER_OUTER, thumbX, oy, 15f, 15f);
+        fill(ctx, ColorRole.SWITCH_THUMB_HIGHLIGHT, thumbX + 1f, oy + 1f, 13f, 13f);
+        fill(ctx, ColorRole.SWITCH_THUMB, thumbX + 2f, oy + 2f, 11f, 10f);
+        fill(ctx, ColorRole.SWITCH_THUMB_SHADOW, thumbX + 1f, oy + 12f, 13f, 2f);
         drawFocus(ctx);
     }
 }

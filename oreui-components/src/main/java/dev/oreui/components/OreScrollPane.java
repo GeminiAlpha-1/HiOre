@@ -34,7 +34,7 @@ public final class OreScrollPane extends OreWidget {
     @Override
     public boolean wheel(int delta) {
         float before = scrollY;
-        scrollBy(delta * 20f);
+        scrollBy(-delta * 20f);
         return scrollY != before;
     }
 

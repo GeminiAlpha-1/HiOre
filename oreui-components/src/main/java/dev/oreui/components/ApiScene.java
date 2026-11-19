@@ -161,8 +161,9 @@ public final class ApiScene implements OreScene {
         @Override
         public TextMetrics measure(IText text, TypeRole role, float maxWidth) {
             String value = text.key();
-            return new TextMetrics(value.length() * TEXT_WIDTH, theme.type(role).lineHeight(),
-                    List.of(value));
+            int lineHeight = theme.type(role).lineHeight();
+            return new TextMetrics(value.length() * TEXT_WIDTH, lineHeight, lineHeight,
+                    1, Math.max(1, lineHeight - 2), List.of(value));
         }
     }
 

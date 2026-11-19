@@ -51,6 +51,7 @@ public final class OreDropdown extends OreInteractive {
     public void syncFrames() {
         super.syncFrames();
         if (popup != null) {
+            positionPopup();
             popup.syncFrames();
         }
     }
@@ -69,9 +70,14 @@ public final class OreDropdown extends OreInteractive {
         if (popup == null) {
             popup = new DropdownPopup(context, this, items);
         }
-        popup.layoutNode().frame().set(bounds().x(), bounds().bottom(), bounds().width(), items.size() * 18f);
+        positionPopup();
         popup.syncFrames();
         manager.push(popup);
+    }
+
+    private void positionPopup() {
+        popup.layoutNode().frame().set(bounds().x(), bounds().bottom(),
+                bounds().width(), items.size() * 18f + 2f);
     }
 
     @Override
@@ -108,7 +114,8 @@ public final class OreDropdown extends OreInteractive {
     public void renderForeground(IRenderContext ctx) {
         IText trigger = selected >= 0 ? items.get(selected) : new LiteralText("Select…");
         TextMetrics metrics = context.textMeasurer().measure(trigger, TypeRole.LABEL, 0f);
-        text(ctx, trigger, bounds().x() + 5f, bounds().y() + textCenterY(0f, bounds().height(), metrics),
+        text(ctx, trigger, bounds().x() + 5f,
+                bounds().y() + textCenterY(1f, Math.max(1f, bounds().height() - 2f), metrics),
                 TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
     }
 
@@ -124,7 +131,7 @@ public final class OreDropdown extends OreInteractive {
 
         @Override
         public boolean pointerDown(float x, float y) {
-            int index = (int) ((y - bounds().y()) / 18f);
+            int index = (int) ((y - bounds().y() - 1f) / 18f);
             owner.select(Math.max(0, Math.min(items.size() - 1, index)));
             owner.setOpen(false);
             return true;
@@ -132,19 +139,44 @@ public final class OreDropdown extends OreInteractive {
 
         @Override
         public void renderBackground(IRenderContext ctx) {
-            fill(ctx, ColorRole.SURFACE_CARD, bounds().x(), bounds().y(), bounds().width(), bounds().height());
-            outline(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y(), bounds().width(), bounds().height(), 1f);
-            if (owner.selected() >= 0) {
-                fill(ctx, ColorRole.ACCENT_DEFAULT, bounds().x() + 1f, bounds().y() + owner.selected() * 18f + 1f,
-                        2f, 16f);
+            float x = bounds().x();
+            float y = bounds().y();
+            float w = bounds().width();
+            float h = bounds().height();
+            fill(ctx, ColorRole.SURFACE_SUNKEN, x, y, w, h);
+            for (int i = 0; i < items.size(); i++) {
+                float itemY = y + 1f + i * 18f;
+                fill(ctx, ColorRole.SURFACE_RAISED_DEFAULT, x + 1f, itemY, w - 2f, 17f);
+                if (i > 0) {
+                    fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, itemY - 1f, w - 2f, 1f);
+                }
+                if (i == owner.selected()) {
+                    fill(ctx, ColorRole.ACCENT_DEFAULT, x + 1f, itemY, 2f, 17f);
+                }
             }
+            fill(ctx, ColorRole.BORDER_OUTER, x, y, w, 1f);
+            fill(ctx, ColorRole.BORDER_OUTER, x, y + h - 1f, w, 1f);
+            fill(ctx, ColorRole.BORDER_OUTER, x, y + 1f, 1f, h - 2f);
+            fill(ctx, ColorRole.BORDER_OUTER, x + w - 1f, y + 1f, 1f, h - 2f);
+            fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, w - 2f, 1f);
         }
 
         @Override
         public void renderForeground(IRenderContext ctx) {
             for (int i = 0; i < items.size(); i++) {
-                text(ctx, items.get(i), bounds().x() + 8f, bounds().y() + i * 18f + 4f,
-                        TypeRole.LABEL, i == owner.selected() ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_SECONDARY);
+                float itemY = bounds().y() + 1f + i * 18f;
+                TextMetrics metrics = context.textMeasurer().measure(items.get(i), TypeRole.LABEL, 0f);
+                text(ctx, items.get(i), bounds().x() + 8f, textCenterY(itemY, 17f, metrics),
+                        TypeRole.LABEL, i == owner.selected()
+                                ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_SECONDARY);
+                if (i == owner.selected()) {
+                    float tickX = bounds().right() - 12f;
+                    float tickY = itemY + 5f;
+                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX, tickY + 2f, 2f, 2f);
+                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 2f, tickY + 4f, 2f, 2f);
+                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 4f, tickY + 2f, 2f, 2f);
+                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 6f, tickY, 2f, 2f);
+                }
             }
         }
     }

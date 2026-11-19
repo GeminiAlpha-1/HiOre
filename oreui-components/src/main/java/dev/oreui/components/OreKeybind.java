@@ -85,12 +85,13 @@ public final class OreKeybind extends OreInteractive {
     public void renderForeground(IRenderContext ctx) {
         IText label = new LiteralText(capturing ? "…" : bridge.displayName(keyCode));
         TextMetrics metrics = context.textMeasurer().measure(label, TypeRole.LABEL, 0f);
-        text(ctx, label, bounds().x() + 6f, bounds().y() + textCenterY(0f, bounds().height(), metrics),
+        text(ctx, label, bounds().x() + 6f,
+                bounds().y() + textCenterY(1f, Math.max(1f, bounds().height() - 2f), metrics),
                 TypeRole.LABEL, conflict ? ColorRole.DANGER_DEFAULT : ColorRole.TEXT_PRIMARY);
         if (conflict) {
             IText mark = new LiteralText("!");
             text(ctx, mark, bounds().right() - 10f,
-                    bounds().y() + textCenterY(0f, bounds().height(), metrics),
+                    bounds().y() + textCenterY(1f, Math.max(1f, bounds().height() - 2f), metrics),
                     TypeRole.LABEL, ColorRole.DANGER_DEFAULT);
         }
     }

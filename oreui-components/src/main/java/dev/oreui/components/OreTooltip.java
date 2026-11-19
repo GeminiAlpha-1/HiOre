@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.core.geom.Rect2f;
 import dev.oreui.layout.ViewportClamp;
 import dev.oreui.theme.ColorRole;
@@ -75,7 +76,10 @@ public final class OreTooltip extends OreWidget {
             return;
         }
         Rect2f area = area();
-        text(ctx, text, area.x() + 6f, area.y() + 7f, TypeRole.CAPTION, ColorRole.TEXT_PRIMARY);
+        TextMetrics metrics = context.textMeasurer().measure(text, TypeRole.CAPTION, 0f);
+        text(ctx, text, area.x() + 6f,
+                textCenterY(area.y() + 2f, Math.max(1f, area.height() - 4f), metrics),
+                TypeRole.CAPTION, ColorRole.TEXT_PRIMARY);
     }
 
     public TooltipPlacement placement() {

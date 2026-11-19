@@ -116,8 +116,8 @@ public final class Fabric26RenderContext implements IRenderContext {
     public void submitText(IText text, float x, float y, TypeRole role, ColorRole color, boolean shadow) {
         requireBegun();
         String resolved = textSource.resolve(text);
-
-        extractor.text(Minecraft.getInstance().font, resolved, Math.round(x), Math.round(y),
+        var font = role == TypeRole.TITLE ? MinecraftFonts.display() : Minecraft.getInstance().font;
+        extractor.text(font, resolved, Math.round(x), Math.round(y),
                 applyOpacity(theme.color(color)), shadow);
     }
 
@@ -128,7 +128,7 @@ public final class Fabric26RenderContext implements IRenderContext {
         if (clip == null || clip.isEmpty()) {
             return;
         }
-        var font = Minecraft.getInstance().font;
+        var font = role == TypeRole.TITLE ? MinecraftFonts.display() : Minecraft.getInstance().font;
         if (y + font.lineHeight <= clip.y() || y >= clip.bottom()) {
             return;
         }

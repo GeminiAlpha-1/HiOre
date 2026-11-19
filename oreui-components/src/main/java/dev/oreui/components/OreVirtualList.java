@@ -105,7 +105,7 @@ public final class OreVirtualList<T> extends OreWidget {
 
     @Override
     public boolean wheel(int delta) {
-        setScroll(scroll + delta * rowHeight);
+        setScroll(scroll - delta * rowHeight);
         return true;
     }
 

@@ -67,6 +67,7 @@ import dev.oreui.components.TextAlign;
 import dev.oreui.components.ToastSeverity;
 import dev.oreui.components.TooltipPlacement;
 import dev.oreui.components.platform.IGameObjectRenderer.IItemHandle;
+
 import dev.oreui.core.geom.Insets;
 import dev.oreui.core.geom.Rect2f;
 import dev.oreui.layout.LayoutStyle;
@@ -75,6 +76,7 @@ import dev.oreui.theme.OreTokens;
 import dev.oreui.theme.TypeRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -122,6 +124,7 @@ public final class OreComponentShowcaseScreen extends Screen {
     private boolean itemsWired;
     private boolean pendingLogged;
     private boolean dumped;
+
 
     public OreComponentShowcaseScreen() {
         super(Component.literal("OreUI Component Showcase"));
@@ -177,6 +180,7 @@ public final class OreComponentShowcaseScreen extends Screen {
                     }
                 }, event -> tree.dispatch(event), gameObjects);
         host.attach();
+
         LOG.info("[oreui] showcase screen opened");
     }
 
@@ -245,6 +249,7 @@ public final class OreComponentShowcaseScreen extends Screen {
         viewport.set((width - PANEL_W) * 0.5f, (height - panelHeight) * 0.5f, PANEL_W, panelHeight);
         tree.layout(viewport);
         tree.update(1f / 20f);
+
         if (!dumped && Boolean.getBoolean("orui.dump")) {
             dumped = true;
             dump(root, 0);
@@ -319,9 +324,12 @@ public final class OreComponentShowcaseScreen extends Screen {
         wrap.style().width(125f);
         labelRow.addChild(wrap);
 
-        Box dividerRow = card(context, page, "OreDivider", "HORIZONTAL / VERTICAL", 12f);
+        Box dividerRow = card(context, page, "OreDivider", "HORIZONTAL / VERTICAL", 34f);
+        dividerRow.style().direction(LayoutStyle.Direction.COLUMN)
+                .alignItems(LayoutStyle.Align.CENTER)
+                .justifyContent(LayoutStyle.Justify.CENTER);
         OreDivider horizontal = new OreDivider(context, Orientation.HORIZONTAL);
-        horizontal.style().width(380f);
+        horizontal.style().width(CARD_INNER_W);
         OreDivider vertical = new OreDivider(context, Orientation.VERTICAL);
         vertical.style().height(12f);
         dividerRow.addChild(horizontal);
@@ -443,6 +451,7 @@ public final class OreComponentShowcaseScreen extends Screen {
         Box dropdownRow = card(context, page, "OreDropdown", "STANDARD，点击展开 Overlay 弹层", 20f);
         OreDropdown dropdown = new OreDropdown(context, DropdownSize.STANDARD,
                 List.of(new LiteralText("Alpha"), new LiteralText("Beta"), new LiteralText("Gamma")));
+
         dropdown.style().width(390f).height(20f);
         dropdown.select(0);
         dropdownRow.addChild(dropdown);

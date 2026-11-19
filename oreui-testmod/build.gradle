@@ -44,6 +44,7 @@ loom {
             if (project.hasProperty('oruiPage')) {
                 vmArg "-Dorui.page=${project.property('oruiPage')}"
             }
+
             if (project.hasProperty('oruiDump')) {
                 vmArg "-Dorui.dump=${project.property('oruiDump')}"
             }

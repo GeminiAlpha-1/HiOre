@@ -27,7 +27,8 @@ public final class OreBadge extends OreWidget {
     public void renderForeground(IRenderContext ctx) {
         TextMetrics metrics = context.textMeasurer().measure(text, TypeRole.LABEL, 0f);
         text(ctx, text, bounds().x() + 4f,
-                textCenterY(bounds().y(), bounds().height(), metrics), TypeRole.LABEL, ColorRole.TEXT_ON_ACCENT);
+                textCenterY(bounds().y() + 1f, Math.max(1f, bounds().height() - 2f), metrics),
+                TypeRole.LABEL, ColorRole.TEXT_ON_ACCENT);
     }
 
     private ColorRole background() {

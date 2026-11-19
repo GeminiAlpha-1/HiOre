@@ -28,13 +28,16 @@ class PlatformTypesTest {
     void textMetricsCopiesLines() {
         List<String> lines = new ArrayList<>();
         lines.add("a");
-        TextMetrics metrics = new TextMetrics(10, 20, lines);
+        TextMetrics metrics = new TextMetrics(10, 20, 9, 1, 7, lines);
         lines.add("b");
 
         assertEquals(1, metrics.lines().size());
         assertEquals(10, metrics.width());
         assertEquals(20, metrics.height());
-        assertThrows(IllegalArgumentException.class, () -> new TextMetrics(-1, 20, List.of()));
+        assertEquals(1, metrics.inkTop());
+        assertEquals(7, metrics.inkHeight());
+        assertThrows(IllegalArgumentException.class,
+                () -> new TextMetrics(-1, 20, 9, 1, 7, List.of()));
     }
 
     @Test

@@ -39,14 +39,14 @@ public record StateStyle(
 
         private static StateStyle primary(ControlState state) {
             return switch (state) {
-                case DEFAULT, FOCUSED -> style(ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_HOVER,
-                        ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
+                case DEFAULT, FOCUSED -> style(ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_HIGHLIGHT,
+                        ColorRole.ACCENT_HIGHLIGHT, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
                         0, Border.LIP_BUTTON.value());
-                case HOVER -> style(ColorRole.ACCENT_HOVER, ColorRole.ACCENT_HOVER,
-                        ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
+                case HOVER -> style(ColorRole.ACCENT_HOVER, ColorRole.ACCENT_HIGHLIGHT,
+                        ColorRole.ACCENT_HIGHLIGHT, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
                         0, Border.LIP_BUTTON.value());
-                case PRESSED -> style(ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_PRESSED,
-                        ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_PRESSED, ColorRole.TEXT_ON_ACCENT,
+                case PRESSED -> style(ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_HIGHLIGHT_PRESSED,
+                        ColorRole.ACCENT_HIGHLIGHT_PRESSED, ColorRole.ACCENT_PRESSED, ColorRole.TEXT_ON_ACCENT,
                         2, 0);
                 case DISABLED -> disabled(ColorRole.ACCENT_DISABLED, ColorRole.TEXT_DISABLED);
             };
@@ -54,14 +54,14 @@ public record StateStyle(
 
         private static StateStyle secondary(ControlState state) {
             return switch (state) {
-                case DEFAULT, FOCUSED -> style(ColorRole.SECONDARY_DEFAULT, ColorRole.BEVEL_LIGHT,
-                        ColorRole.BEVEL_DARK, ColorRole.SECONDARY_LIP, ColorRole.TEXT_ON_LIGHT,
+                case DEFAULT, FOCUSED -> style(ColorRole.SECONDARY_DEFAULT, ColorRole.SECONDARY_HIGHLIGHT,
+                        ColorRole.SECONDARY_HIGHLIGHT, ColorRole.SECONDARY_LIP, ColorRole.TEXT_ON_LIGHT,
                         0, Border.LIP_BUTTON.value());
-                case HOVER -> style(ColorRole.SECONDARY_HOVER, ColorRole.BEVEL_LIGHT,
-                        ColorRole.BEVEL_DARK, ColorRole.SECONDARY_LIP, ColorRole.TEXT_ON_LIGHT,
+                case HOVER -> style(ColorRole.SECONDARY_HOVER, ColorRole.SECONDARY_HIGHLIGHT,
+                        ColorRole.SECONDARY_HIGHLIGHT, ColorRole.SECONDARY_LIP, ColorRole.TEXT_ON_LIGHT,
                         0, Border.LIP_BUTTON.value());
-                case PRESSED -> style(ColorRole.SECONDARY_PRESSED, ColorRole.BEVEL_DARK,
-                        ColorRole.BEVEL_LIGHT, ColorRole.SECONDARY_PRESSED, ColorRole.TEXT_ON_LIGHT,
+                case PRESSED -> style(ColorRole.SECONDARY_PRESSED, ColorRole.SECONDARY_HIGHLIGHT_PRESSED,
+                        ColorRole.SECONDARY_HIGHLIGHT_PRESSED, ColorRole.SECONDARY_PRESSED, ColorRole.TEXT_ON_LIGHT,
                         2, 0);
                 case DISABLED -> disabled(ColorRole.SECONDARY_DISABLED, ColorRole.TEXT_DISABLED);
             };
@@ -69,14 +69,14 @@ public record StateStyle(
 
         private static StateStyle danger(ControlState state) {
             return switch (state) {
-                case DEFAULT, FOCUSED -> style(ColorRole.DANGER_DEFAULT, ColorRole.DANGER_HOVER,
-                        ColorRole.DANGER_PRESSED, ColorRole.DANGER_LIP, ColorRole.TEXT_ON_ACCENT,
+                case DEFAULT, FOCUSED -> style(ColorRole.DANGER_DEFAULT, ColorRole.DANGER_HIGHLIGHT,
+                        ColorRole.DANGER_HIGHLIGHT, ColorRole.DANGER_LIP, ColorRole.TEXT_ON_ACCENT,
                         0, Border.LIP_BUTTON.value());
-                case HOVER -> style(ColorRole.DANGER_HOVER, ColorRole.DANGER_HOVER,
-                        ColorRole.DANGER_PRESSED, ColorRole.DANGER_LIP, ColorRole.TEXT_ON_ACCENT,
+                case HOVER -> style(ColorRole.DANGER_HOVER, ColorRole.DANGER_HIGHLIGHT,
+                        ColorRole.DANGER_HIGHLIGHT, ColorRole.DANGER_LIP, ColorRole.TEXT_ON_ACCENT,
                         0, Border.LIP_BUTTON.value());
-                case PRESSED -> style(ColorRole.DANGER_PRESSED, ColorRole.DANGER_PRESSED,
-                        ColorRole.DANGER_DEFAULT, ColorRole.DANGER_PRESSED, ColorRole.TEXT_ON_ACCENT,
+                case PRESSED -> style(ColorRole.DANGER_PRESSED, ColorRole.DANGER_HIGHLIGHT_PRESSED,
+                        ColorRole.DANGER_HIGHLIGHT_PRESSED, ColorRole.DANGER_PRESSED, ColorRole.TEXT_ON_ACCENT,
                         2, 0);
                 case DISABLED -> disabled(ColorRole.DANGER_DISABLED, ColorRole.TEXT_DISABLED);
             };
@@ -84,14 +84,14 @@ public record StateStyle(
 
         private static StateStyle hero(ControlState state) {
             return switch (state) {
-                case DEFAULT, FOCUSED -> style(ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_HOVER,
-                        ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
+                case DEFAULT, FOCUSED -> style(ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_HIGHLIGHT,
+                        ColorRole.ACCENT_HIGHLIGHT, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
                         0, Border.LIP_BUTTON.value());
-                case HOVER -> style(ColorRole.ACCENT_HOVER, ColorRole.ACCENT_HOVER,
-                        ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
+                case HOVER -> style(ColorRole.ACCENT_HOVER, ColorRole.ACCENT_HIGHLIGHT,
+                        ColorRole.ACCENT_HIGHLIGHT, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
                         0, Border.LIP_BUTTON.value());
-                case PRESSED -> style(ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_PRESSED,
-                        ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_PRESSED, ColorRole.TEXT_ON_ACCENT,
+                case PRESSED -> style(ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_HIGHLIGHT_PRESSED,
+                        ColorRole.ACCENT_HIGHLIGHT_PRESSED, ColorRole.ACCENT_PRESSED, ColorRole.TEXT_ON_ACCENT,
                         2, 0);
                 case DISABLED -> disabled(ColorRole.ACCENT_DISABLED, ColorRole.TEXT_DISABLED);
             };

@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.TypeRole;
 
@@ -37,11 +38,11 @@ public final class OreToast extends OreWidget {
         }
         fill(ctx, ColorRole.SURFACE_CARD, bounds().x(), bounds().y(), bounds().width(), bounds().height());
         outline(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y(), bounds().width(), bounds().height(), 1f);
-        fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 4f, bounds().y() + 1f,
-                bounds().width() - 5f, 1f);
-        fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 4f, bounds().y() + bounds().height() - 2f,
-                bounds().width() - 5f, 1f);
-        fill(ctx, accent(), bounds().x(), bounds().y(), 4f, bounds().height());
+        fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 5f, bounds().y() + 1f,
+                bounds().width() - 6f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 5f, bounds().y() + bounds().height() - 2f,
+                bounds().width() - 6f, 1f);
+        fill(ctx, accent(), bounds().x() + 1f, bounds().y() + 1f, 4f, bounds().height() - 2f);
     }
 
     @Override
@@ -49,7 +50,10 @@ public final class OreToast extends OreWidget {
         if (remaining <= 0f) {
             return;
         }
-        text(ctx, text, bounds().x() + 10f, bounds().y() + 12f, TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
+        TextMetrics metrics = context.textMeasurer().measure(text, TypeRole.LABEL, 0f);
+        text(ctx, text, bounds().x() + 10f,
+                textCenterY(bounds().y() + 1f, Math.max(1f, bounds().height() - 2f), metrics),
+                TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
     }
 
     private ColorRole accent() {

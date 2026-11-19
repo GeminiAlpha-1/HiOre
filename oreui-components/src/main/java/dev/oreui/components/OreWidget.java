@@ -262,7 +262,16 @@ public abstract class OreWidget {
         ctx.submitTextClipped(text, x, y, role, color, clip);
     }
 
+    /**
+     * Returns the renderer y (line top) that places the measured ink box at the vertical center
+     * of {@code [top, top + height]}.
+     */
     protected float textCenterY(float top, float height, TextMetrics metrics) {
-        return top + (height - metrics.glyphHeight()) * 0.5f;
+        int inkHeight = metrics.inkHeight();
+        if (inkHeight <= 0) {
+            return Math.round(top + (height - metrics.glyphHeight()) * 0.5f);
+        }
+        float inkTop = top + (height - inkHeight) * 0.5f;
+        return Math.round(inkTop) - metrics.inkTop();
     }
 }

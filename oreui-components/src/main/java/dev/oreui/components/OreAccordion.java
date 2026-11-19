@@ -3,6 +3,7 @@ package dev.oreui.components;
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
 import dev.oreui.components.platform.TextMetrics;
+import dev.oreui.core.geom.Rect2f;
 import dev.oreui.layout.LayoutStyle;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.SizeToken;
@@ -38,16 +39,13 @@ public final class OreAccordion extends OreWidget {
         Section target = sections.get(index);
         if (mode == AccordionMode.SINGLE && expanded) {
             for (int i = 0; i < sections.size(); i++) {
-                if (i != index && sections.get(i).expanded) {
-                    collapse(sections.get(i));
+                if (i != index) {
+                    sections.get(i).expanded = false;
                 }
             }
         }
-        if (expanded) {
-            expand(target);
-        } else {
-            collapse(target);
-        }
+        target.expanded = expanded;
+        rebuildChildren();
     }
 
     public OreAccordion addSection(IText title, OreWidget content) {
@@ -57,26 +55,39 @@ public final class OreAccordion extends OreWidget {
         header.onClick = () -> toggle(index);
         section.header = header;
         sections.add(section);
-        addChild(header);
+        rebuildChildren();
         return this;
     }
 
-    private void expand(Section section) {
-        if (section.expanded) {
-            return;
+    private void rebuildChildren() {
+        List<OreWidget> current = new ArrayList<>(children());
+        for (OreWidget child : current) {
+            removeChild(child);
         }
-        section.expanded = true;
-        addChild(section.content);
+        for (Section section : sections) {
+            section.header.expanded = section.expanded;
+            addChild(section.header);
+            if (section.expanded) {
+                addChild(section.content);
+            }
+        }
         markDirty();
     }
 
-    private void collapse(Section section) {
-        if (!section.expanded) {
-            return;
+    @Override
+    public void renderBackground(IRenderContext ctx) {
+        for (Section section : sections) {
+            if (!section.expanded) {
+                continue;
+            }
+            Rect2f area = section.content.bounds();
+            if (area.isEmpty()) {
+                continue;
+            }
+            fill(ctx, ColorRole.SURFACE_CARD, area.x(), area.y(), area.width(), area.height());
+            outline(ctx, ColorRole.BORDER_OUTER, area.x(), area.y(), area.width(), area.height(), 1f);
         }
-        section.expanded = false;
-        removeChild(section.content);
-        markDirty();
+        super.renderBackground(ctx);
     }
 
     private static final class Section {
@@ -95,6 +106,7 @@ public final class OreAccordion extends OreWidget {
         private final IText title;
         private Runnable onClick = () -> {
         };
+        private boolean expanded;
 
         private Header(ComponentContext context, IText title) {
             super(context);
@@ -110,22 +122,30 @@ public final class OreAccordion extends OreWidget {
 
         @Override
         public void renderBackground(IRenderContext ctx) {
-            fill(ctx, ColorRole.SURFACE_CARD, bounds().x(), bounds().y(), bounds().width(), bounds().height());
-            fill(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y() + bounds().height() - 1f,
-                    bounds().width(), 1f);
-            fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x(), bounds().y(), bounds().width(), 1f);
+            float x = bounds().x();
+            float y = bounds().y();
+            float w = bounds().width();
+            float h = bounds().height();
+            fill(ctx, ColorRole.SURFACE_CARD, x, y, w, h);
+            fill(ctx, ColorRole.BORDER_OUTER, x, y, w, 1f);
+            fill(ctx, ColorRole.BORDER_OUTER, x, y + h - 1f, w, 1f);
+            fill(ctx, ColorRole.BORDER_OUTER, x, y, 1f, h);
+            fill(ctx, ColorRole.BORDER_OUTER, x + w - 1f, y, 1f, h);
+            fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, w - 2f, 1f);
             drawFocus(ctx);
         }
 
         @Override
         public void renderForeground(IRenderContext ctx) {
             TextMetrics metrics = context.textMeasurer().measure(title, TypeRole.LABEL, 0f);
-            text(ctx, title, bounds().x() + 6f, textCenterY(bounds().y(), bounds().height(), metrics),
+            text(ctx, title, bounds().x() + 8f, textCenterY(bounds().y() + 1f, Math.max(1f, bounds().height() - 2f), metrics),
                     TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
             float cx = bounds().right() - 12f;
-            float cy = bounds().y() + bounds().height() * 0.5f - 2f;
-            fill(ctx, ColorRole.ICON_MUTED, cx, cy, 6f, 2f);
-            fill(ctx, ColorRole.ICON_MUTED, cx + 2f, cy, 2f, 6f);
+            float iconTop = bounds().y() + (bounds().height() - 6f) * 0.5f;
+            fill(ctx, ColorRole.ICON_MUTED, cx, iconTop + 2f, 6f, 2f);
+            if (!expanded) {
+                fill(ctx, ColorRole.ICON_MUTED, cx + 2f, iconTop, 2f, 6f);
+            }
         }
     }
 }

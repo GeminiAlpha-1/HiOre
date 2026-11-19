@@ -37,19 +37,32 @@ public final class OreButton extends OreInteractive {
     public void renderBackground(IRenderContext ctx) {
         StateStyle state = context.theme().state(variant, state());
         float x = bounds().x();
-        float y = bounds().y() + state.offsetY();
+        float y = bounds().y();
         float w = bounds().width();
         float h = bounds().height();
-        fill(ctx, state.background(), x, y, w, h);
+        int offset = state.offsetY();
         if (variant != ButtonVariant.GHOST) {
-            outline(ctx, ColorRole.BORDER_OUTER, x, y, w, h, 1f);
-            fill(ctx, state.bevelLight(), x + 1f, y + 1f, w - 2f, 1f);
-            fill(ctx, state.bevelLight(), x + 1f, y + 1f, 1f, h - 2f);
-            fill(ctx, state.bevelDark(), x + 1f, y + h - 2f, w - 2f, 1f);
-            fill(ctx, state.bevelDark(), x + w - 2f, y + 1f, 1f, h - 2f);
-        }
-        if (state.lipHeight() > 0) {
-            fill(ctx, state.lip(), x + 1f, y + h - state.lipHeight(), w - 2f, state.lipHeight());
+            float faceTop = y + offset;
+            float faceHeight = h - offset;
+            fill(ctx, state.background(), x + 1f, faceTop + 1f, w - 2f, faceHeight - 2f);
+            fill(ctx, state.bevelLight(), x + 1f, faceTop + 1f, w - 2f, 1f);
+            float bottomHighlight = y + h - 3f + offset;
+            float railTop = faceTop + 2f;
+            float railBottom = Math.min(y + h - 1f, bottomHighlight);
+            fill(ctx, state.bevelLight(), x + 1f, railTop, 1f, railBottom - railTop);
+            fill(ctx, state.bevelLight(), x + w - 2f, railTop, 1f, railBottom - railTop);
+            if (bottomHighlight < y + h - 1f) {
+                fill(ctx, state.bevelLight(), x + 1f, bottomHighlight, w - 2f, 1f);
+            }
+            if (offset == 0 && state.lipHeight() > 0) {
+                fill(ctx, state.lip(), x + 1f, y + h - state.lipHeight(), w - 2f, state.lipHeight());
+            }
+            fill(ctx, ColorRole.BORDER_OUTER, x, faceTop, w, 1f);
+            fill(ctx, ColorRole.BORDER_OUTER, x, y + h - 1f, w, 1f);
+            fill(ctx, ColorRole.BORDER_OUTER, x, faceTop + 1f, 1f, faceHeight - 2f);
+            fill(ctx, ColorRole.BORDER_OUTER, x + w - 1f, faceTop + 1f, 1f, faceHeight - 2f);
+        } else {
+            fill(ctx, state.background(), x, y, w, h);
         }
         drawFocus(ctx);
     }
@@ -63,16 +76,41 @@ public final class OreButton extends OreInteractive {
         TextMeasure measure = value -> context.textMeasurer()
                 .measure(new LiteralText(value.toString()), fontRole, 0f).width();
         String clipped = TextGeometry.ellipsize(context.textSource().resolve(text), maxWidth, measure);
+        if (variant == ButtonVariant.HERO) {
+            clipped = asciiOnly(clipped);
+        }
         TextMetrics metrics = context.textMeasurer()
                 .measure(new LiteralText(clipped), fontRole, 0f);
         float x = bounds().x() + (bounds().width() - metrics.width()) * 0.5f;
-        float y = textCenterY(bounds().y() + state.offsetY(),
-                bounds().height() - state.lipHeight(), metrics);
+        int offset = state.offsetY();
+        float innerTop = bounds().y() + offset + 2f;
+        float innerBottom = Math.min(bounds().y() + bounds().height() - 1f,
+                bounds().y() + bounds().height() - 3f + offset);
+        float y = textCenterY(innerTop, Math.max(1f, innerBottom - innerTop), metrics);
         if (variant == ButtonVariant.HERO) {
             textClipped(ctx, new LiteralText(clipped), x + 2f, y + 2f, fontRole,
                     ColorRole.TEXT_SHADOW, bounds());
         }
         textClipped(ctx, new LiteralText(clipped), x, y, fontRole, state.text(), bounds());
+    }
+
+    private static String asciiOnly(String value) {
+        boolean ascii = true;
+        for (int i = 0; i < value.length(); i++) {
+            if (value.charAt(i) > 0x7E) {
+                ascii = false;
+                break;
+            }
+        }
+        if (ascii) {
+            return value;
+        }
+        StringBuilder filtered = new StringBuilder(value.length());
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            filtered.append(c >= 0x20 && c <= 0x7E ? c : '?');
+        }
+        return filtered.toString();
     }
 
     @Override

@@ -56,14 +56,14 @@ public final class OreFluidSlot extends OreWidget {
                     w - BORDER * 2f, BORDER);
         }
 
-        float gaugeX = x + w - BORDER - 6f;
+        float gaugeX = x + w - 7f;
         float gaugeTop = y + BORDER + 1f;
         float gaugeBottom = y + h - BORDER - 1f;
         int ticks = 4;
         for (int i = 0; i <= ticks; i++) {
             float ty = gaugeBottom - (gaugeBottom - gaugeTop) * i / ticks;
-            float length = i == ticks || i == 0 ? 6f * GAUGE_LONG : 6f * GAUGE_SHORT;
-            fill(ctx, ColorRole.GAUGE_TICK, gaugeX - length + 6f, ty, length, 1f);
+            float length = i == 0 || i == ticks ? 4f : 2f;
+            fill(ctx, ColorRole.GAUGE_TICK, gaugeX, ty, length, 1f);
         }
 
         IGameObjectRenderer renderer = context.gameObjectRenderer();

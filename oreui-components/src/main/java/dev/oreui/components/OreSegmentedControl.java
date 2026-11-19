@@ -108,10 +108,11 @@ public final class OreSegmentedControl extends OreInteractive {
             float y;
             if (orientation == Orientation.HORIZONTAL) {
                 x = bounds().x() + i * segment + (segment - metrics.width()) * 0.5f;
-                y = textCenterY(bounds().y(), bounds().height(), metrics);
+                y = textCenterY(bounds().y() + 1f, Math.max(1f, bounds().height() - 2f), metrics);
             } else {
                 x = bounds().x() + (bounds().width() - metrics.width()) * 0.5f;
-                y = textCenterY(bounds().y() + i * segment, segment, metrics);
+                y = textCenterY(bounds().y() + i * segment + 1f,
+                        Math.max(1f, segment - 2f), metrics);
             }
             text(ctx, labels.get(i), x, y, TypeRole.LABEL,
                     i == selected ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_MUTED);

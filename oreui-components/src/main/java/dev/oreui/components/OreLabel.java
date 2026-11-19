@@ -18,7 +18,8 @@ public final class OreLabel extends OreWidget {
     private final int maxLines;
     private final TextAlign align;
     private List<String> lines = List.of();
-    private int glyphHeight;
+    private int inkTop;
+    private int inkHeight;
 
     public OreLabel(ComponentContext context, IText text, TypeRole role, LabelOverflow overflow,
                     int maxWidth) {
@@ -50,7 +51,8 @@ public final class OreLabel extends OreWidget {
         float width = style().width();
         float maxWidth = Float.isNaN(width) ? 200f : width;
         TextMetrics metrics = context.textMeasurer().measure(text, role, maxWidth);
-        glyphHeight = metrics.glyphHeight();
+        inkTop = metrics.inkTop();
+        inkHeight = metrics.inkHeight();
         List<String> measured = metrics.lines();
         List<String> next = new ArrayList<>();
         if (measured.isEmpty()) {
@@ -82,7 +84,8 @@ public final class OreLabel extends OreWidget {
     public void renderForeground(IRenderContext ctx) {
         ColorRole color = context.theme().type(role).color();
         float lineHeight = context.theme().type(role).lineHeight();
-        float glyphOffset = (lineHeight - glyphHeight) * 0.5f;
+        float inkOffset = inkHeight > 0
+                ? Math.round((lineHeight - inkHeight) * 0.5f) - inkTop : 0f;
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             float width = context.textMeasurer()
@@ -94,7 +97,7 @@ public final class OreLabel extends OreWidget {
                 x += bounds().width() - width;
             }
             textClipped(ctx, new LiteralText(line), x,
-                    bounds().y() + i * lineHeight + glyphOffset, role, color, bounds());
+                    bounds().y() + i * lineHeight + inkOffset, role, color, bounds());
         }
     }
 }

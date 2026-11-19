@@ -10,18 +10,22 @@ public final class OreDivider extends OreWidget {
         super(context);
         this.orientation = orientation;
         if (orientation == Orientation.HORIZONTAL) {
-            style().height(1f);
+            style().height(2f);
         } else {
-            style().width(1f);
+            style().width(2f);
         }
     }
 
     @Override
     public void renderBackground(IRenderContext ctx) {
+        float x = bounds().x();
+        float y = bounds().y();
         if (orientation == Orientation.HORIZONTAL) {
-            fill(ctx, ColorRole.DIVIDER, bounds().x(), bounds().y(), bounds().width(), 1f);
+            fill(ctx, ColorRole.DIVIDER_DARK, x, y, bounds().width(), 1f);
+            fill(ctx, ColorRole.DIVIDER_LIGHT, x, y + 1f, bounds().width(), 1f);
         } else {
-            fill(ctx, ColorRole.DIVIDER, bounds().x(), bounds().y(), 1f, bounds().height());
+            fill(ctx, ColorRole.DIVIDER_DARK, x, y, 1f, bounds().height());
+            fill(ctx, ColorRole.DIVIDER_LIGHT, x + 1f, y, 1f, bounds().height());
         }
     }
 }

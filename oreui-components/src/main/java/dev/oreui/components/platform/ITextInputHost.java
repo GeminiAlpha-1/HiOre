@@ -18,4 +18,12 @@ public interface ITextInputHost {
     void insertText(String text);
 
     int cursorPosition();
+
+    default boolean nativeFocused() {
+        return false;
+    }
+
+    default String preeditText() {
+        return "";
+    }
 }

@@ -77,23 +77,24 @@ public final class OreSlider extends OreInteractive {
     @Override
     public void renderBackground(IRenderContext ctx) {
         float x = bounds().x();
-        float y = bounds().y() + 7f;
+        float y = bounds().y();
         float w = bounds().width();
-        fill(ctx, ColorRole.SURFACE_SUNKEN, x, y, w, 6f);
-        outline(ctx, ColorRole.BORDER_OUTER, x, y, w, 6f, 1f);
-        fill(ctx, ColorRole.SLIDER_FILL, x + 1f, y + 1f, Math.max(0f, (w - 2f) * value), 4f);
-        fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, Math.max(0f, (w - 2f) * value), 1f);
-        if (mode == SliderMode.DISCRETE_TICKS) {
-            for (int i = 1; i < 10; i++) {
-                float tickX = x + w * i / 10f;
-                fill(ctx, ColorRole.BORDER_OUTER, tickX, y + 1f, 1f, 4f);
-            }
-        }
-        float knobX = x + (w - 8f) * value;
-        fill(ctx, ColorRole.SLIDER_KNOB, knobX, bounds().y() + 2f, 8f, 12f);
-        outline(ctx, ColorRole.BORDER_OUTER, knobX, bounds().y() + 2f, 8f, 12f, 1f);
-        fill(ctx, ColorRole.BEVEL_LIGHT, knobX + 1f, bounds().y() + 3f, 6f, 1f);
-        fill(ctx, ColorRole.BEVEL_DARK, knobX + 1f, bounds().y() + 12f, 6f, 1f);
+        float trackY = y + 7f;
+        float fillWidth = Math.max(0f, (w - 2f) * value);
+
+        fill(ctx, ColorRole.BORDER_OUTER, x, trackY, w, 6f);
+        fill(ctx, ColorRole.SLIDER_TRACK_HIGHLIGHT, x + 1f, trackY + 1f, w - 2f, 2f);
+        fill(ctx, ColorRole.SLIDER_TRACK, x + 1f, trackY + 3f, w - 2f, 2f);
+        fill(ctx, ColorRole.ACCENT_HIGHLIGHT, x + 1f, trackY + 1f, fillWidth, 2f);
+        fill(ctx, ColorRole.ACCENT_DEFAULT, x + 1f, trackY + 3f, fillWidth, 2f);
+
+
+        float thumbX = x + (w - 14f) * value;
+        float thumbY = y + 3f;
+        fill(ctx, ColorRole.BORDER_OUTER, thumbX, thumbY, 14f, 14f);
+        fill(ctx, ColorRole.SLIDER_THUMB_HIGHLIGHT, thumbX + 1f, thumbY + 1f, 12f, 12f);
+        fill(ctx, ColorRole.SLIDER_KNOB, thumbX + 2f, thumbY + 2f, 10f, 9f);
+        fill(ctx, ColorRole.SLIDER_THUMB_SHADOW, thumbX + 1f, thumbY + 11f, 12f, 2f);
         drawFocus(ctx);
     }
 }

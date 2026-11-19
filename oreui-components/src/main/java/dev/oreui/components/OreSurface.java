@@ -27,9 +27,10 @@ public final class OreSurface extends OreWidget {
                 fill(ctx, variant == SurfaceVariant.PANEL ? ColorRole.SURFACE_BASE : ColorRole.SURFACE_CARD,
                         x, y, w, h);
                 outline(ctx, ColorRole.BORDER_OUTER, x, y, w, h, 1f);
-                fill(ctx, ColorRole.BEVEL_LIGHT, x, y + 1f, w - 1f, 1f);
-                fill(ctx, ColorRole.BEVEL_DARK, x, y + h - 1f, w, 1f);
-                fill(ctx, ColorRole.BEVEL_DARK, x + w - 1f, y + 1f, 1f, h - 2f);
+                fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, w - 2f, 1f);
+                fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, 1f, h - 2f);
+                fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + h - 2f, w - 2f, 1f);
+                fill(ctx, ColorRole.BEVEL_DARK, x + w - 2f, y + 1f, 1f, h - 2f);
             }
             case WELL -> {
                 fill(ctx, ColorRole.SURFACE_SUNKEN, x, y, w, h);

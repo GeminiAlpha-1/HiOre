@@ -32,9 +32,11 @@ final class TestFixtures {
                 for (int i = 0; i < value.length(); i += chars) {
                     lines.add(value.substring(i, Math.min(value.length(), i + chars)));
                 }
-                return new TextMetrics(chars * 6, lineHeight * lines.size(), lines);
+                return new TextMetrics(chars * 6, lineHeight * lines.size(), lineHeight,
+                        1, Math.max(1, lineHeight - 2), lines);
             }
-            return new TextMetrics(width, lineHeight, List.of(value));
+            return new TextMetrics(width, lineHeight, lineHeight, 1,
+                    Math.max(1, lineHeight - 2), List.of(value));
         };
         IClipboard clipboard = new IClipboard() {
             private String value = "";

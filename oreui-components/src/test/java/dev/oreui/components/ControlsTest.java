@@ -6,6 +6,8 @@ import dev.oreui.core.geom.Rect2f;
 import dev.oreui.theme.TypeRole;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -88,6 +90,40 @@ class ControlsTest {
     }
 
     @Test
+    void dropdownOpensOverlayAndSelectsItem() {
+        ComponentContext context = TestFixtures.context();
+        OreDropdown dropdown = new OreDropdown(context, DropdownSize.STANDARD,
+                List.of(new LiteralText("Alpha"), new LiteralText("Beta"), new LiteralText("Gamma")));
+        dropdown.style().width(120f).height(20f);
+        ComponentTree tree = new ComponentTree(dropdown);
+        tree.layout(new Rect2f(0f, 0f, 120f, 20f));
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.POINTER_DOWN, 10f, 10f, 0, 0, '\0')));
+        assertTrue(dropdown.isOpen());
+        assertEquals(1, tree.overlayManager().overlays().size());
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.POINTER_UP, 10f, 10f, 0, 0, '\0')));
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.POINTER_DOWN, 10f, 48f, 0, 0, '\0')));
+        assertTrue(!dropdown.isOpen());
+        assertEquals(1, dropdown.selected());
+        assertTrue(tree.overlayManager().overlays().isEmpty());
+    }
+
+    @Test
+    void dropdownPopupKeepsTriggerAfterRebuild() {
+        ComponentContext context = TestFixtures.context();
+        OreDropdown dropdown = new OreDropdown(context, DropdownSize.STANDARD,
+                List.of(new LiteralText("Alpha"), new LiteralText("Beta")));
+        dropdown.style().width(120f).height(20f);
+        ComponentTree tree = new ComponentTree(dropdown);
+        tree.layout(new Rect2f(0f, 0f, 120f, 20f));
+        dropdown.setOpen(true);
+        assertTrue(dropdown.isOpen());
+        assertEquals(1, tree.overlayManager().overlays().size());
+        tree.layout(new Rect2f(0f, 0f, 120f, 20f));
+        assertTrue(dropdown.isOpen());
+        assertEquals(1, tree.overlayManager().overlays().size());
+    }
+
+    @Test
     void wheelBubblesFromScrollContentToPane() {
         ComponentContext context = TestFixtures.context();
         OreSurface content = new OreSurface(context, SurfaceVariant.CARD);
@@ -99,7 +135,10 @@ class ControlsTest {
         ComponentTree tree = new ComponentTree(pane);
         tree.layout(new Rect2f(0f, 0f, 100f, 20f));
         float before = pane.scrollY();
-        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.WHEEL, 5f, 5f, 1, 0, 0)));
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.WHEEL, 5f, 5f, -1, 0, 0)));
         assertTrue(pane.scrollY() > before);
+        float scrolled = pane.scrollY();
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.WHEEL, 5f, 5f, 1, 0, 0)));
+        assertTrue(pane.scrollY() < scrolled);
     }
 }

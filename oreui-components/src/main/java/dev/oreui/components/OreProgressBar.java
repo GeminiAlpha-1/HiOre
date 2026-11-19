@@ -40,26 +40,26 @@ public final class OreProgressBar extends OreWidget {
     @Override
     public void renderBackground(IRenderContext ctx) {
         float x = bounds().x();
-        float y = bounds().y() + 6f;
+        float y = bounds().y() + 7f;
         float w = bounds().width();
-        float h = 8f;
-        fill(ctx, ColorRole.SURFACE_SUNKEN, x, y, w, h);
-        outline(ctx, ColorRole.BORDER_OUTER, x, y, w, h, 1f);
+        float fillWidth = Math.max(0f, (w - 2f) * value);
+
+        fill(ctx, ColorRole.BORDER_OUTER, x, y, w, 6f);
+        fill(ctx, ColorRole.SLIDER_TRACK_HIGHLIGHT, x + 1f, y + 1f, w - 2f, 2f);
+        fill(ctx, ColorRole.SLIDER_TRACK, x + 1f, y + 3f, w - 2f, 2f);
         if (progressStyle == ProgressStyle.INDETERMINATE) {
             float period = Motion.INDETERMINATE_PERIOD.millis() / 1000f;
             float sweep = (elapsed % period) / period;
             float segment = 24f;
             float segmentX = x + 1f + (w - segment - 2f) * sweep;
-            fill(ctx, ColorRole.PROGRESS_FILL, segmentX, y + 1f, segment, h - 2f);
-            fill(ctx, ColorRole.BEVEL_LIGHT, segmentX, y + 1f, segment, 1f);
+            fill(ctx, ColorRole.ACCENT_HIGHLIGHT, segmentX, y + 1f, segment, 2f);
+            fill(ctx, ColorRole.ACCENT_DEFAULT, segmentX, y + 3f, segment, 2f);
         } else {
-            float fillWidth = Math.max(0f, (w - 2f) * value);
-            fill(ctx, ColorRole.PROGRESS_FILL, x + 1f, y + 1f, fillWidth, h - 2f);
-            fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, fillWidth, 1f);
-            fill(ctx, ColorRole.PROGRESS_FILL_LIP, x + 1f, y + h - 2f, fillWidth, 1f);
+            fill(ctx, ColorRole.ACCENT_HIGHLIGHT, x + 1f, y + 1f, fillWidth, 2f);
+            fill(ctx, ColorRole.ACCENT_DEFAULT, x + 1f, y + 3f, fillWidth, 2f);
             if (progressStyle == ProgressStyle.SEGMENTED) {
                 for (float sx = x + 8f; sx < x + w - 2f; sx += 8f) {
-                    fill(ctx, ColorRole.SURFACE_SUNKEN, sx, y + 1f, 2f, h - 2f);
+                    fill(ctx, ColorRole.SURFACE_SUNKEN, sx, y + 1f, 2f, 4f);
                 }
             }
         }
@@ -67,7 +67,7 @@ public final class OreProgressBar extends OreWidget {
 
     @Override
     public void renderForeground(IRenderContext ctx) {
-        if (text == null) {
+        if (text == null || progressStyle == ProgressStyle.CONTINUOUS) {
             return;
         }
         TextMetrics metrics = context.textMeasurer().measure(text, TypeRole.CAPTION, 0f);

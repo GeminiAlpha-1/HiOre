@@ -67,7 +67,9 @@ public final class OreModal extends OreWidget {
         fill(ctx, ColorRole.SURFACE_BASE, x, y, w, h);
         outline(ctx, ColorRole.BORDER_OUTER, x, y, w, h, 1f);
         fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, w - 2f, 1f);
-        fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + h - 1f, w - 2f, 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, 1f, h - 2f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, x + w - 2f, y + 1f, 1f, h - 2f);
+        fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + h - 2f, w - 2f, 1f);
         fill(ctx, ColorRole.SURFACE_RAISED_DEFAULT, x + w - 70f, y + h - 26f, 60f, 18f);
         outline(ctx, ColorRole.BORDER_OUTER, x + w - 70f, y + h - 26f, 60f, 18f, 1f);
     }

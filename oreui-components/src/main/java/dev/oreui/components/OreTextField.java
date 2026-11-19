@@ -3,6 +3,7 @@ package dev.oreui.components;
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
 import dev.oreui.components.platform.ITextInputHost;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.Motion;
 import dev.oreui.theme.TypeRole;
@@ -93,6 +94,10 @@ public final class OreTextField extends OreInteractive {
             return false;
         }
         if (inputHost != null) {
+            if (inputHost.nativeFocused()) {
+                syncFromHost();
+                return true;
+            }
             boolean handled = inputHost.keyPressed(key, modifiers);
             syncFromHost();
             return handled;
@@ -156,6 +161,10 @@ public final class OreTextField extends OreInteractive {
             return false;
         }
         if (inputHost != null) {
+            if (inputHost.nativeFocused()) {
+                syncFromHost();
+                return true;
+            }
             boolean handled = inputHost.charTyped(codepoint);
             syncFromHost();
             return handled;
@@ -231,13 +240,20 @@ public final class OreTextField extends OreInteractive {
     @Override
     public void renderForeground(IRenderContext ctx) {
         String current = value.toString();
-        IText display = new LiteralText(current);
+        int caretPos = Math.min(caret, current.length());
+        String preedit = inputHost == null ? "" : inputHost.preeditText();
+        String presented = preedit.isEmpty() ? current
+                : current.substring(0, caretPos) + preedit + current.substring(caretPos);
+        IText display = new LiteralText(presented);
         ColorRole color = isEnabled() ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_DISABLED;
-        text(ctx, display, bounds().x() + 3f, bounds().y() + 5f, TypeRole.BODY, color);
+        TextMetrics metrics = context.textMeasurer().measure(display, TypeRole.BODY, 0f);
+        text(ctx, display, bounds().x() + 3f,
+                textCenterY(bounds().y() + 1f, Math.max(1f, bounds().height() - 2f), metrics),
+                TypeRole.BODY, color);
         if (isFocused()) {
             float period = Motion.CARET_BLINK.millis() / 1000f;
             if ((blinkElapsed % (period * 2f)) < period) {
-                String before = current.substring(0, Math.min(caret, current.length()));
+                String before = presented.substring(0, caretPos + preedit.length());
                 float caretX = bounds().x() + 3f
                         + context.textMeasurer().measure(new LiteralText(before), TypeRole.BODY, 0f).width();
                 fill(ctx, ColorRole.CARET, caretX, bounds().y() + 4f, 1f, 12f);

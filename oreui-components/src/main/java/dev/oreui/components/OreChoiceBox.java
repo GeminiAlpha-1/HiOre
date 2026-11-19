@@ -35,25 +35,53 @@ public final class OreChoiceBox extends OreInteractive {
 
     @Override
     public void renderBackground(IRenderContext ctx) {
-        float x = bounds().x();
-        float y = bounds().y();
-        fill(ctx, ColorRole.SURFACE_SUNKEN, x, y, 16f, 16f);
-        outline(ctx, ColorRole.BORDER_OUTER, x, y, 16f, 16f, 1f);
-        fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, 14f, 1f);
-        fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + 14f, 14f, 1f);
-        if (selected) {
-            fill(ctx, ColorRole.ACCENT_DEFAULT, x + 2f, y + 2f, 12f, 12f);
-            if (mode == ChoiceMode.RADIO_SINGLE) {
-                fill(ctx, ColorRole.ACCENT_LIP, x + 6f, y + 6f, 4f, 4f);
-            } else {
-                fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 4f, y + 7f, 2f, 2f);
-                fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 6f, y + 9f, 2f, 2f);
-                fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 8f, y + 5f, 2f, 2f);
-                fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 10f, y + 3f, 2f, 2f);
-            }
+        if (mode == ChoiceMode.RADIO_SINGLE) {
+            renderRadio(ctx);
+        } else {
+            renderCheckbox(ctx);
         }
         if (state() == ControlState.FOCUSED) {
             drawFocus(ctx);
+        }
+    }
+
+    private void renderCheckbox(IRenderContext ctx) {
+        float x = bounds().x() + 2f;
+        float y = bounds().y() + 2f;
+        ColorRole background = selected ? ColorRole.ACCENT_DEFAULT : ColorRole.CHECKBOX_TRACK;
+        ColorRole highlight = selected ? ColorRole.ACCENT_HIGHLIGHT : ColorRole.CHECKBOX_TRACK_HIGHLIGHT;
+        fill(ctx, background, x, y, 12f, 12f);
+        outline(ctx, ColorRole.BORDER_OUTER, x, y, 12f, 12f, 1f);
+        fill(ctx, highlight, x + 1f, y + 1f, 10f, 1f);
+        fill(ctx, highlight, x + 1f, y + 1f, 1f, 10f);
+        fill(ctx, highlight, x + 10f, y + 1f, 1f, 10f);
+        fill(ctx, highlight, x + 1f, y + 10f, 10f, 1f);
+        if (selected) {
+            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 2f, y + 6f, 2f, 2f);
+            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 4f, y + 8f, 2f, 2f);
+            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 6f, y + 6f, 2f, 2f);
+            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 8f, y + 4f, 2f, 2f);
+        }
+    }
+
+    private void renderRadio(IRenderContext ctx) {
+        float x = bounds().x() + 2f;
+        float y = bounds().y() + 2f;
+        ColorRole background = selected ? ColorRole.ACCENT_DEFAULT : ColorRole.CHECKBOX_TRACK;
+        ColorRole highlight = selected ? ColorRole.ACCENT_HIGHLIGHT : ColorRole.CHECKBOX_TRACK_HIGHLIGHT;
+        diamond(ctx, ColorRole.BORDER_OUTER, x, y, 12);
+        diamond(ctx, highlight, x + 1f, y + 1f, 10);
+        diamond(ctx, background, x + 2f, y + 2f, 8);
+        if (selected) {
+            diamond(ctx, ColorRole.TEXT_ON_ACCENT, x + 4f, y + 4f, 4);
+        }
+    }
+
+    private void diamond(IRenderContext ctx, ColorRole role, float x, float y, int size) {
+        for (int row = 0; row < size; row++) {
+            int inset = Math.min(row, size - 1 - row);
+            int start = (size - 1) / 2 - inset;
+            fill(ctx, role, x + start, y + row, size - start * 2, 1f);
         }
     }
 }
