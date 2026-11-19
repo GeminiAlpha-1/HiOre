@@ -75,7 +75,7 @@ public final class OreUIV2GalleryScreen extends Screen {
         }
         Minecraft client = Minecraft.getInstance();
         Fabric26TextSource textSource = new Fabric26TextSource();
-        Fabric26TextMeasurer measurer = new Fabric26TextMeasurer(client.font, textSource, OreTokens.DARK);
+        Fabric26TextMeasurer measurer = new Fabric26TextMeasurer(textSource, OreTokens.DARK);
         Fabric26GameObjectRenderer gameObjects = new Fabric26GameObjectRenderer();
         ComponentContext context = new ComponentContext(OreTokens.DARK, textSource, measurer,
                 new Fabric26Clipboard(), new Fabric26SoundBridge(), new Fabric26KeybindBridge(),

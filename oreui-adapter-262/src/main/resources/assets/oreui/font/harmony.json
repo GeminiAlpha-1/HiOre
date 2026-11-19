@@ -1,0 +1,11 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "oreui:harmony_sans.ttf",
+      "size": 11.0,
+      "oversample": 2.0,
+      "skip": ""
+    }
+  ]
+}

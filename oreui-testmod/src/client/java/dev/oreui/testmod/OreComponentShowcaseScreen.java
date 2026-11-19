@@ -12,6 +12,7 @@ import dev.oreui.adapter262.Fabric26TextSource;
 import dev.oreui.adapter262.Fabric26TextFieldHost;
 import dev.oreui.adapter262.Fabric26TimeSource;
 import dev.oreui.adapter262.OreFabricScreenHost;
+import dev.oreui.adapter262.OreFonts;
 import dev.oreui.components.AccordionMode;
 import dev.oreui.components.BadgeSeverity;
 import dev.oreui.components.ChoiceMode;
@@ -141,7 +142,7 @@ public final class OreComponentShowcaseScreen extends Screen {
         }
         Minecraft client = Minecraft.getInstance();
         Fabric26TextSource textSource = new Fabric26TextSource();
-        Fabric26TextMeasurer measurer = new Fabric26TextMeasurer(client.font, textSource, OreTokens.DARK);
+        Fabric26TextMeasurer measurer = new Fabric26TextMeasurer(textSource, OreTokens.DARK);
         Fabric26GameObjectRenderer gameObjects = new Fabric26GameObjectRenderer();
         ComponentContext context = new ComponentContext(OreTokens.DARK, textSource, measurer,
                 new Fabric26Clipboard(), new Fabric26SoundBridge(), new Fabric26KeybindBridge(),
@@ -601,6 +602,17 @@ public final class OreComponentShowcaseScreen extends Screen {
         modal.setOpen(true);
         modalRow.addChild(openModal);
         modalRow.addChild(modal);
+
+        Box fontRow = card(context, page, "OreFont", "内置 HarmonyOS Sans，运行时热切换", 20f);
+        OreDropdown fontDropdown = new OreDropdown(context, DropdownSize.STANDARD,
+                List.of(new LiteralText("默认字体"), new LiteralText("HarmonyOS Sans")));
+        fontDropdown.style().width(240f).height(20f);
+        fontDropdown.select(OreFonts.bodyFamily() == OreFonts.Family.HARMONY ? 1 : 0);
+        fontDropdown.setOnSelect(index -> {
+            OreFonts.setBodyFamily(index == 1 ? OreFonts.Family.HARMONY : OreFonts.Family.DEFAULT);
+            showPage(pageIndex);
+        });
+        fontRow.addChild(fontDropdown);
         return page;
     }
 

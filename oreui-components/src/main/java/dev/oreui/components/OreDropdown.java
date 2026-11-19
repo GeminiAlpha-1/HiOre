@@ -7,6 +7,7 @@ import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.TypeRole;
 
 import java.util.List;
+import java.util.function.IntConsumer;
 
 public final class OreDropdown extends OreInteractive {
     private static final int ICON_GRID = 8;
@@ -24,6 +25,7 @@ public final class OreDropdown extends OreInteractive {
     private int selected = -1;
     private boolean open;
     private DropdownPopup popup;
+    private IntConsumer onSelect;
 
     public OreDropdown(ComponentContext context, DropdownSize dropdownSize, List<IText> items) {
         super(context);
@@ -43,7 +45,14 @@ public final class OreDropdown extends OreInteractive {
     public void select(int index) {
         if (index >= 0 && index < items.size()) {
             selected = index;
+            if (onSelect != null) {
+                onSelect.accept(index);
+            }
         }
+    }
+
+    public void setOnSelect(IntConsumer listener) {
+        this.onSelect = listener;
     }
 
     public void setOpen(boolean open) {
@@ -186,11 +195,15 @@ public final class OreDropdown extends OreInteractive {
                                 ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_SECONDARY);
                 if (i == owner.selected()) {
                     float tickX = Math.round(bounds().right() - 18f);
-                    float tickY = itemY + 5f;
-                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX, tickY + 2f, 2f, 2f);
-                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 2f, tickY + 4f, 2f, 2f);
-                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 4f, tickY + 2f, 2f, 2f);
-                    fill(ctx, ColorRole.TEXT_PRIMARY, tickX + 6f, tickY, 2f, 2f);
+                    float tickY = Math.round(itemY + (17f - 8f) * 0.5f);
+                    for (int row = 0; row < ICON_GRID; row++) {
+                        int bits = OreIcon.CHECK[row];
+                        for (int col = 0; col < ICON_GRID; col++) {
+                            if ((bits & (1 << (ICON_GRID - 1 - col))) != 0) {
+                                fill(ctx, ColorRole.TEXT_PRIMARY, tickX + col, tickY + row, 1f, 1f);
+                            }
+                        }
+                    }
                 }
             }
         }

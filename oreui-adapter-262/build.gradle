@@ -12,3 +12,9 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:5.14.4"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.14.4"
 }
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
+    }
+}

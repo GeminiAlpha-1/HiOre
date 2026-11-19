@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "oreui",
+  "version": "${version}",
+  "name": "OreUI for Fabric",
+  "description": "OreUI-style UI library for Minecraft 26.2 (adapter and bundled fonts).",
+  "authors": [
+    "HiOre"
+  ],
+  "license": "LGPL-3.0-only",
+  "environment": "client",
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "fabric-api": "*",
+    "minecraft": "~26.2"
+  }
+}

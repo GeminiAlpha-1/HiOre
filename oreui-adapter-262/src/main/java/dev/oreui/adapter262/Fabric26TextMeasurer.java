@@ -19,24 +19,28 @@ import java.util.Map;
 public final class Fabric26TextMeasurer implements ITextMeasurer {
     private static final int INK_CACHE_LIMIT = 256;
 
-    private final Font font;
     private final ITextSource textSource;
     private final OreTheme theme;
     private final Map<String, Ink> bodyInk = new HashMap<>();
     private final Map<String, Ink> displayInk = new HashMap<>();
+    private int fontGeneration = OreFonts.generation();
 
-    public Fabric26TextMeasurer(Font font, ITextSource textSource, OreTheme theme) {
-        this.font = font;
+    public Fabric26TextMeasurer(ITextSource textSource, OreTheme theme) {
         this.textSource = textSource;
         this.theme = theme;
     }
 
     @Override
     public TextMetrics measure(IText text, TypeRole role, float maxWidth) {
+        int generation = OreFonts.generation();
+        if (generation != fontGeneration) {
+            fontGeneration = generation;
+            bodyInk.clear();
+        }
         String resolved = textSource.resolve(text);
         TypeStyle style = theme.type(role);
         boolean display = role == TypeRole.TITLE;
-        Font roleFont = display ? MinecraftFonts.display() : font;
+        Font roleFont = display ? MinecraftFonts.display() : MinecraftFonts.body();
         Ink ink = ink(roleFont, display ? displayInk : bodyInk, resolved);
         int fullWidth = roleFont.width(resolved);
         if (!(maxWidth > 0f) || fullWidth <= maxWidth) {
