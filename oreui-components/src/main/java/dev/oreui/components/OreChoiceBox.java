@@ -57,10 +57,7 @@ public final class OreChoiceBox extends OreInteractive {
         fill(ctx, highlight, x + 10f, y + 1f, 1f, 10f);
         fill(ctx, highlight, x + 1f, y + 10f, 10f, 1f);
         if (selected) {
-            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 2f, y + 6f, 2f, 2f);
-            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 4f, y + 8f, 2f, 2f);
-            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 6f, y + 6f, 2f, 2f);
-            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 8f, y + 4f, 2f, 2f);
+            fill(ctx, ColorRole.TEXT_ON_ACCENT, x + 3f, y + 3f, 6f, 6f);
         }
     }
 

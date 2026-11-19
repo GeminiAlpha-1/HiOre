@@ -9,6 +9,16 @@ import dev.oreui.theme.TypeRole;
 import java.util.List;
 
 public final class OreDropdown extends OreInteractive {
+    private static final int ICON_GRID = 8;
+    private static final int[] CHEVRON_DOWN = {
+            0b00000000, 0b00000000, 0b00000000, 0b10000001,
+            0b01000010, 0b00100100, 0b00011000, 0b00000000,
+    };
+    private static final int[] CHEVRON_UP = {
+            0b00000000, 0b00011000, 0b00100100, 0b01000010,
+            0b10000001, 0b00000000, 0b00000000, 0b00000000,
+    };
+
     private final List<IText> items;
     private final DropdownSize dropdownSize;
     private int selected = -1;
@@ -101,12 +111,17 @@ public final class OreDropdown extends OreInteractive {
         fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 1f, bounds().y() + 1f, bounds().width() - 2f, 1f);
         fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 1f, bounds().y() + bounds().height() - 1f,
                 bounds().width() - 2f, 1f);
-        fill(ctx, ColorRole.ICON_PRIMARY, bounds().x() + bounds().width() - 12f,
-                bounds().y() + 7f, 2f, 2f);
-        fill(ctx, ColorRole.ICON_PRIMARY, bounds().x() + bounds().width() - 10f,
-                bounds().y() + 9f, 2f, 2f);
-        fill(ctx, ColorRole.ICON_PRIMARY, bounds().x() + bounds().width() - 14f,
-                bounds().y() + 9f, 2f, 2f);
+        float arrowX = bounds().x() + bounds().width() - 18f;
+        float arrowY = bounds().y() + (bounds().height() - ICON_GRID) * 0.5f;
+        int[] arrow = open ? CHEVRON_UP : CHEVRON_DOWN;
+        for (int row = 0; row < ICON_GRID; row++) {
+            int bits = arrow[row];
+            for (int col = 0; col < ICON_GRID; col++) {
+                if ((bits & (1 << (ICON_GRID - 1 - col))) != 0) {
+                    fill(ctx, ColorRole.ICON_PRIMARY, arrowX + col, arrowY + row, 1f, 1f);
+                }
+            }
+        }
         drawFocus(ctx);
     }
 

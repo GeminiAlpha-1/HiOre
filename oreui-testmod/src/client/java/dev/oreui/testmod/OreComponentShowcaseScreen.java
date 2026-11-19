@@ -470,7 +470,7 @@ public final class OreComponentShowcaseScreen extends Screen {
 
         Box scrollRow = card(context, page, "OreScrollPane", "ALWAYS，滚轮滚动 / 裁剪", 40f);
         OreSurface scrollContent = new OreSurface(context, SurfaceVariant.CARD);
-        scrollContent.style().width(370f).height(90f).padding(new Insets(4f, 4f, 4f, 4f)).gap(2f);
+        scrollContent.style().width(390f).height(90f).padding(new Insets(4f, 4f, 4f, 4f)).gap(2f);
         for (int row = 1; row <= 8; row++) {
             OreLabel line = new OreLabel(context, new LiteralText("Scroll row " + row),
                     TypeRole.CAPTION, LabelOverflow.CLIP, 350);

@@ -4,6 +4,28 @@ import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.theme.ColorRole;
 
 public final class OreIcon extends OreWidget {
+    private static final int GRID = 8;
+    private static final int[] CHECK = {
+            0b00000000, 0b00000001, 0b00000010, 0b00000100,
+            0b10001000, 0b01010000, 0b00100000, 0b00000000,
+    };
+    private static final int[] CHEVRON_DOWN = {
+            0b00000000, 0b00000000, 0b00000000, 0b10000001,
+            0b01000010, 0b00100100, 0b00011000, 0b00000000,
+    };
+    private static final int[] CLOSE = {
+            0b10000010, 0b01000100, 0b00101000, 0b00010000,
+            0b00101000, 0b01000100, 0b10000010, 0b00000000,
+    };
+    private static final int[] SEARCH = {
+            0b00111000, 0b01000100, 0b01000100, 0b00111000,
+            0b00000100, 0b00000010, 0b00000000, 0b00000000,
+    };
+    private static final int[] DOT = {
+            0b00000000, 0b00000000, 0b00111100, 0b00111100,
+            0b00111100, 0b00111100, 0b00000000, 0b00000000,
+    };
+
     private final IconKind kind;
     private final int size;
 
@@ -18,42 +40,22 @@ public final class OreIcon extends OreWidget {
     public void renderBackground(IRenderContext ctx) {
         float x = bounds().x();
         float y = bounds().y();
-        float k = size / 12f;
-        float px = Math.max(1f, Math.round(2f * k));
+        float cell = Math.max(1f, size / (float) GRID);
+        int[] rows = switch (kind) {
+            case CHECK -> CHECK;
+            case CHEVRON_DOWN -> CHEVRON_DOWN;
+            case CLOSE -> CLOSE;
+            case SEARCH -> SEARCH;
+            case DOT -> DOT;
+        };
         ColorRole role = ColorRole.ICON_PRIMARY;
-        switch (kind) {
-            case CHECK -> {
-                fill(ctx, role, x + 2f * k, y + 6f * k, px, px);
-                fill(ctx, role, x + 4f * k, y + 8f * k, px, px);
-                fill(ctx, role, x + 6f * k, y + 6f * k, px, px);
-                fill(ctx, role, x + 8f * k, y + 4f * k, px, px);
+        for (int row = 0; row < GRID; row++) {
+            int bits = rows[row];
+            for (int col = 0; col < GRID; col++) {
+                if ((bits & (1 << (GRID - 1 - col))) != 0) {
+                    fill(ctx, role, x + col * cell, y + row * cell, cell, cell);
+                }
             }
-            case CHEVRON_DOWN -> {
-                fill(ctx, role, x + 2f * k, y + 4f * k, px, px);
-                fill(ctx, role, x + 4f * k, y + 6f * k, px, px);
-                fill(ctx, role, x + 6f * k, y + 6f * k, px, px);
-                fill(ctx, role, x + 8f * k, y + 4f * k, px, px);
-            }
-            case CLOSE -> {
-                fill(ctx, role, x + 2f * k, y + 2f * k, px, px);
-                fill(ctx, role, x + 4f * k, y + 4f * k, px, px);
-                fill(ctx, role, x + 6f * k, y + 6f * k, px, px);
-                fill(ctx, role, x + 8f * k, y + 8f * k, px, px);
-                fill(ctx, role, x + 8f * k, y + 2f * k, px, px);
-                fill(ctx, role, x + 6f * k, y + 4f * k, px, px);
-                fill(ctx, role, x + 4f * k, y + 6f * k, px, px);
-                fill(ctx, role, x + 2f * k, y + 8f * k, px, px);
-            }
-            case SEARCH -> {
-                float stroke = Math.max(1f, k);
-                fill(ctx, role, x + 2f * k, y + 2f * k, 6f * k, stroke);
-                fill(ctx, role, x + 2f * k, y + 2f * k, stroke, 6f * k);
-                fill(ctx, role, x + 7f * k, y + 2f * k, stroke, 6f * k);
-                fill(ctx, role, x + 2f * k, y + 7f * k, 6f * k, stroke);
-                fill(ctx, role, x + 8f * k, y + 8f * k, Math.max(2f, 3f * k), Math.max(1f, 2f * k));
-            }
-            case DOT -> fill(ctx, role, x + 4f * k, y + 4f * k,
-                    Math.max(2f, 4f * k), Math.max(2f, 4f * k));
         }
     }
 }

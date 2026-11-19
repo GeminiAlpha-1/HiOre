@@ -62,7 +62,7 @@ public final class OreFluidSlot extends OreWidget {
             renderer.submitFluid(fluid, fluidRect);
         }
 
-        float gaugeX = x + w - 7f;
+        float gaugeX = x + BORDER;
         float gaugeTop = y + BORDER + 1f;
         float gaugeBottom = y + h - BORDER - 1f;
         int ticks = 4;

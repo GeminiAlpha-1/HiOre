@@ -2,7 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.theme.ColorRole;
-import dev.oreui.theme.Radius;
+
 
 public final class OreScrollPane extends OreWidget {
     private final OreWidget content;
@@ -58,7 +58,7 @@ public final class OreScrollPane extends OreWidget {
             float thumbH = Math.max(8f, (bounds().height() - 2f) * ratio);
             float maxScroll = Math.max(1f, content.bounds().height() - bounds().height());
             float thumbY = bounds().y() + 1f + (bounds().height() - 2f - thumbH) * (scrollY / maxScroll);
-            fillRounded(ctx, ColorRole.SCROLL_THUMB, trackX, thumbY, 4f, thumbH, Radius.SM.value());
+            fill(ctx, ColorRole.SCROLL_THUMB, trackX, thumbY, 4f, thumbH);
         }
     }
 

@@ -2,7 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.theme.ColorRole;
-import dev.oreui.theme.Radius;
+
 import dev.oreui.theme.SizeToken;
 
 import java.util.ArrayList;
@@ -169,7 +169,7 @@ public final class OreVirtualList<T> extends OreWidget {
                 height * (height / Math.max(height, content)));
         float maxScroll = Math.max(1f, content - height);
         float offset = ((height - thumbHeight) * (scroll / maxScroll));
-        fillRounded(ctx, ColorRole.SCROLL_THUMB, x, y + offset, trackWidth, thumbHeight, Radius.SM.value());
+        fill(ctx, ColorRole.SCROLL_THUMB, x, y + offset, trackWidth, thumbHeight);
     }
 
     private void rebuild() {
