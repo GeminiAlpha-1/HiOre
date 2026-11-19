@@ -16,42 +16,72 @@ import java.util.Map;
 
 final class MinecraftFonts {
     private static final Logger LOG = LoggerFactory.getLogger("oreui-adapter");
-    private static Font display;
-    private static boolean displayResolved;
-    private static Font harmony;
-    private static boolean harmonyResolved;
+
+    private static Map<Identifier, FontSet> sets;
+    private static Font displayFont;
+    private static FontSet displaySet;
+    private static Object displayWhite;
+    private static Font harmonyFont;
+    private static FontSet harmonySet;
+    private static Object harmonyWhite;
 
     private MinecraftFonts() {
     }
 
     static Font display() {
-        if (!displayResolved) {
-            displayResolved = true;
-            display = resolveSet("minecraft_ten");
-        }
-        return display == null ? Minecraft.getInstance().font : display;
+        Font font = font("minecraft_ten", true);
+        return font == null ? Minecraft.getInstance().font : font;
     }
 
     static Font body() {
         if (OreFonts.bodyFamily() == OreFonts.Family.HARMONY) {
-            if (!harmonyResolved) {
-                harmonyResolved = true;
-                harmony = resolveSet("harmony");
-            }
-            if (harmony != null) {
-                return harmony;
+            Font font = font("harmony", false);
+            if (font != null) {
+                return font;
             }
         }
         return Minecraft.getInstance().font;
     }
 
     static void invalidateBody() {
-        harmonyResolved = false;
-        harmony = null;
+        harmonyFont = null;
+        harmonySet = null;
+        harmonyWhite = null;
+    }
+
+    private static Font font(String name, boolean display) {
+        FontSet set = fontSet(name);
+        if (set == null) {
+            LOG.warn("[oreui] font set oreui:{} not found; falling back to default", name);
+            return null;
+        }
+        Object white = set.whiteGlyph();
+        if (display) {
+            if (displayFont == null || set != displaySet || white != displayWhite) {
+                displayFont = createFont(set, name);
+                displaySet = set;
+                displayWhite = white;
+            }
+            return displayFont;
+        }
+        if (harmonyFont == null || set != harmonySet || white != harmonyWhite) {
+            harmonyFont = createFont(set, name);
+            harmonySet = set;
+            harmonyWhite = white;
+        }
+        return harmonyFont;
+    }
+
+    private static FontSet fontSet(String name) {
+        Map<Identifier, FontSet> map = fontSets();
+        return map == null ? null : map.get(Identifier.fromNamespaceAndPath("oreui", name));
     }
 
     @SuppressWarnings("unchecked")
-    private static Font resolveSet(String name) {
+    private static Map<Identifier, FontSet> fontSets() {
+        if (sets != null) {
+            return sets;
+        }
         try {
             Minecraft minecraft = Minecraft.getInstance();
             Field managerField = Minecraft.class.getDeclaredField("fontManager");
@@ -59,12 +89,20 @@ final class MinecraftFonts {
             FontManager manager = (FontManager) managerField.get(minecraft);
             Field setsField = FontManager.class.getDeclaredField("fontSets");
             setsField.setAccessible(true);
-            Map<Identifier, FontSet> sets = (Map<Identifier, FontSet>) setsField.get(manager);
-            FontSet set = sets.get(Identifier.fromNamespaceAndPath("oreui", name));
-            if (set == null) {
-                LOG.warn("[oreui] font set oreui:{} not found; falling back to default", name);
-                return null;
-            }
+            sets = (Map<Identifier, FontSet>) setsField.get(manager);
+            return sets;
+        } catch (ReflectiveOperationException | RuntimeException exception) {
+            LOG.warn("[oreui] font manager unavailable: {}", exception.toString());
+            return null;
+        }
+    }
+
+    private static Font createFont(FontSet set, String name) {
+        try {
+            Minecraft minecraft = Minecraft.getInstance();
+            Field managerField = Minecraft.class.getDeclaredField("fontManager");
+            managerField.setAccessible(true);
+            FontManager manager = (FontManager) managerField.get(minecraft);
             Font font = manager.createFont();
             Field providerField = Font.class.getDeclaredField("provider");
             providerField.setAccessible(true);
@@ -82,8 +120,8 @@ final class MinecraftFonts {
             LOG.info("[oreui] font set oreui:{} attached", name);
             return font;
         } catch (ReflectiveOperationException | RuntimeException exception) {
-            LOG.warn("[oreui] font set oreui:{} unavailable: {}", name, exception.toString());
-            return null;
+            LOG.warn("[oreui] font creation failed: {}", exception.toString());
+            return Minecraft.getInstance().font;
         }
     }
 }

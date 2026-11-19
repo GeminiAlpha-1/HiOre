@@ -116,9 +116,13 @@ public final class Fabric26RenderContext implements IRenderContext {
     public void submitText(IText text, float x, float y, TypeRole role, ColorRole color, boolean shadow) {
         requireBegun();
         String resolved = textSource.resolve(text);
-        var font = role == TypeRole.TITLE ? MinecraftFonts.display() : MinecraftFonts.body();
-        extractor.text(font, resolved, Math.round(x), Math.round(y),
-                applyOpacity(theme.color(color)), shadow);
+        try {
+            var font = role == TypeRole.TITLE ? MinecraftFonts.display() : MinecraftFonts.body();
+            extractor.text(font, resolved, Math.round(x), Math.round(y),
+                    applyOpacity(theme.color(color)), shadow);
+        } catch (IllegalStateException exception) {
+            // Font providers are being reloaded; skip this frame instead of crashing.
+        }
     }
 
     @Override
@@ -128,22 +132,26 @@ public final class Fabric26RenderContext implements IRenderContext {
         if (clip == null || clip.isEmpty()) {
             return;
         }
-        var font = role == TypeRole.TITLE ? MinecraftFonts.display() : MinecraftFonts.body();
-        if (y + font.lineHeight <= clip.y() || y >= clip.bottom()) {
-            return;
+        try {
+            var font = role == TypeRole.TITLE ? MinecraftFonts.display() : MinecraftFonts.body();
+            if (y + font.lineHeight <= clip.y() || y >= clip.bottom()) {
+                return;
+            }
+            float maxWidth = clip.right() - Math.max(x, clip.x());
+            if (maxWidth <= 0f) {
+                return;
+            }
+            String resolved = textSource.resolve(text);
+            String clipped = font.width(resolved) <= maxWidth ? resolved
+                    : TextGeometry.clipToWidth(resolved, maxWidth, value -> font.width(value.toString()));
+            if (clipped.isEmpty()) {
+                return;
+            }
+            extractor.text(font, clipped, Math.round(Math.max(x, clip.x())), Math.round(y),
+                    applyOpacity(theme.color(color)), false);
+        } catch (IllegalStateException exception) {
+            // Font providers are being reloaded; skip this frame instead of crashing.
         }
-        float maxWidth = clip.right() - Math.max(x, clip.x());
-        if (maxWidth <= 0f) {
-            return;
-        }
-        String resolved = textSource.resolve(text);
-        String clipped = font.width(resolved) <= maxWidth ? resolved
-                : TextGeometry.clipToWidth(resolved, maxWidth, value -> font.width(value.toString()));
-        if (clipped.isEmpty()) {
-            return;
-        }
-        extractor.text(font, clipped, Math.round(Math.max(x, clip.x())), Math.round(y),
-                applyOpacity(theme.color(color)), false);
     }
 
     @Override

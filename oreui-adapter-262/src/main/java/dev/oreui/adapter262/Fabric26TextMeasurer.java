@@ -39,25 +39,30 @@ public final class Fabric26TextMeasurer implements ITextMeasurer {
         }
         String resolved = textSource.resolve(text);
         TypeStyle style = theme.type(role);
-        boolean display = role == TypeRole.TITLE;
-        Font roleFont = display ? MinecraftFonts.display() : MinecraftFonts.body();
-        Ink ink = ink(roleFont, display ? displayInk : bodyInk, resolved);
-        int fullWidth = roleFont.width(resolved);
-        if (!(maxWidth > 0f) || fullWidth <= maxWidth) {
-            return new TextMetrics(fullWidth, style.lineHeight(), roleFont.lineHeight,
-                    ink.top(), ink.height(), List.of(resolved));
+        try {
+            boolean display = role == TypeRole.TITLE;
+            Font roleFont = display ? MinecraftFonts.display() : MinecraftFonts.body();
+            Ink ink = ink(roleFont, display ? displayInk : bodyInk, resolved);
+            int fullWidth = roleFont.width(resolved);
+            if (!(maxWidth > 0f) || fullWidth <= maxWidth) {
+                return new TextMetrics(fullWidth, style.lineHeight(), roleFont.lineHeight,
+                        ink.top(), ink.height(), List.of(resolved));
+            }
+            TextLayout layout = new TextLayout();
+            TextGeometry.wrap(resolved, maxWidth, value -> roleFont.width(value.toString()), 64, layout);
+            int widest = 0;
+            for (String line : layout.lines()) {
+                widest = Math.max(widest, roleFont.width(line));
+            }
+            Ink firstLine = layout.lines().isEmpty()
+                    ? ink
+                    : ink(roleFont, display ? displayInk : bodyInk, layout.lines().get(0));
+            return new TextMetrics(widest, layout.size() * style.lineHeight(), roleFont.lineHeight,
+                    firstLine.top(), firstLine.height(), layout.lines());
+        } catch (IllegalStateException exception) {
+            return new TextMetrics(0, style.lineHeight(), style.lineHeight(), 0, 0,
+                    List.of(resolved));
         }
-        TextLayout layout = new TextLayout();
-        TextGeometry.wrap(resolved, maxWidth, value -> roleFont.width(value.toString()), 64, layout);
-        int widest = 0;
-        for (String line : layout.lines()) {
-            widest = Math.max(widest, roleFont.width(line));
-        }
-        Ink firstLine = layout.lines().isEmpty()
-                ? ink
-                : ink(roleFont, display ? displayInk : bodyInk, layout.lines().get(0));
-        return new TextMetrics(widest, layout.size() * style.lineHeight(), roleFont.lineHeight,
-                firstLine.top(), firstLine.height(), layout.lines());
     }
 
     private static Ink ink(Font roleFont, Map<String, Ink> cache, String value) {
