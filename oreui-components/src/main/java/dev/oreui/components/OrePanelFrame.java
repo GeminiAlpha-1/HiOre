@@ -4,6 +4,7 @@ import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
 import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.theme.ColorRole;
+import dev.oreui.theme.Space;
 import dev.oreui.theme.TypeRole;
 
 public final class OrePanelFrame extends OreWidget {
@@ -106,8 +107,12 @@ public final class OrePanelFrame extends OreWidget {
     public void syncFrames() {
         super.syncFrames();
         if (content != null) {
-            content.layoutNode().frame().set(bounds().x() + BORDER, bounds().y() + TITLE_HEIGHT,
-                    bounds().width() - BORDER * 2f, bounds().height() - TITLE_HEIGHT - BORDER);
+            float pad = context.theme().space(Space.SM);
+            float inset = BORDER + pad;
+            content.layoutNode().frame().set(bounds().x() + inset,
+                    bounds().y() + TITLE_HEIGHT + Space.XS.value(),
+                    bounds().width() - inset * 2f,
+                    bounds().height() - TITLE_HEIGHT - Space.XS.value() - inset);
             content.syncFrames();
         }
     }

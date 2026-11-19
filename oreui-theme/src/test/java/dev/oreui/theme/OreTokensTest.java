@@ -53,7 +53,7 @@ class OreTokensTest {
 
     @Test
     void darkMatchesDesignSamples() {
-        assertEquals(0xB3000000, OreTokens.DARK.color(ColorRole.BACKDROP));
+        assertEquals(0x80000000, OreTokens.DARK.color(ColorRole.BACKDROP));
         assertEquals(0xFF313233, OreTokens.DARK.color(ColorRole.SURFACE_BASE));
         assertEquals(0xFF3C8527, OreTokens.DARK.color(ColorRole.ACCENT_DEFAULT));
         assertEquals(0x663C8527, OreTokens.DARK.color(ColorRole.SELECTION));

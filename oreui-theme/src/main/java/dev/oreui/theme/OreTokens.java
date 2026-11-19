@@ -8,7 +8,7 @@ public final class OreTokens {
 
     private static OreTheme buildDark() {
         OreTheme.Builder builder = OreTheme.builder();
-        builder.override(ColorRole.BACKDROP, 0xB3000000);
+        builder.override(ColorRole.BACKDROP, 0x80000000);
         builder.override(ColorRole.SURFACE_BASE, 0xFF313233);
         builder.override(ColorRole.SURFACE_CARD, 0xFF3C3D3E);
         builder.override(ColorRole.SURFACE_RAISED_DEFAULT, 0xFF48494A);

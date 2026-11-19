@@ -227,7 +227,9 @@ public final class Fabric26RenderContext implements IRenderContext {
     }
 
     private int applyOpacity(int argb) {
-        return ColorMath.withAlpha(argb, Math.round(255f * stack.opacity()));
+        int sourceAlpha = (argb >>> 24) & 0xFF;
+        int alpha = Math.round(sourceAlpha * stack.opacity());
+        return ColorMath.withAlpha(argb, alpha);
     }
 
     private static Field guiStateField() {

@@ -59,7 +59,7 @@ public final class OreProgressBar extends OreWidget {
             fill(ctx, ColorRole.ACCENT_DEFAULT, x + 1f, y + 3f, fillWidth, 2f);
             if (progressStyle == ProgressStyle.SEGMENTED) {
                 for (float sx = x + 8f; sx < x + w - 2f; sx += 8f) {
-                    fill(ctx, ColorRole.SURFACE_SUNKEN, sx, y + 1f, 2f, 4f);
+                    fill(ctx, ColorRole.SURFACE_SUNKEN, sx, y + 1f, 1f, 4f);
                 }
             }
         }

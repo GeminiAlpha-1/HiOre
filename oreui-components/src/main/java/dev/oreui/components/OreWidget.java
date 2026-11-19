@@ -73,6 +73,9 @@ public abstract class OreWidget {
         child.parent = this;
         children.add(child);
         layout.addChild(child.layout);
+        if (overlayManager != null) {
+            child.setOverlayManager(overlayManager);
+        }
         return this;
     }
 

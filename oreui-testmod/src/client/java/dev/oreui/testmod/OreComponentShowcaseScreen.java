@@ -117,6 +117,9 @@ public final class OreComponentShowcaseScreen extends Screen {
     private OreToast toast;
     private OreItemGrid grid;
     private OreItemSlot slot;
+    private OreItemSlot standardSlot;
+    private OreItemSlot outputSlot;
+    private OreItemSlot ghostSlot;
     private OreEntityPreview preview;
     private float panelHeight;
     private int pageIndex;
@@ -124,6 +127,7 @@ public final class OreComponentShowcaseScreen extends Screen {
     private boolean itemsWired;
     private boolean pendingLogged;
     private boolean dumped;
+
 
 
     public OreComponentShowcaseScreen() {
@@ -283,6 +287,9 @@ public final class OreComponentShowcaseScreen extends Screen {
             ItemStack worn = new ItemStack(Items.DIAMOND_SWORD);
             worn.setDamageValue(120);
             slot.setItem(new Fabric26ItemHandle(worn));
+            standardSlot.setItem(realItem(Items.APPLE, 5));
+            outputSlot.setItem(realItem(Items.DIAMOND, 64));
+            ghostSlot.setItem(realItem(Items.STICK, 1));
             return true;
         } catch (RuntimeException exception) {
             if (!pendingLogged) {
@@ -542,6 +549,9 @@ public final class OreComponentShowcaseScreen extends Screen {
         OreItemSlot ghost = new OreItemSlot(context, SlotStyle.GHOST_FILTER);
         ghost.setItem(new PreviewItem(1, false, 0, 0));
         slot = large;
+        standardSlot = standard;
+        outputSlot = output;
+        ghostSlot = ghost;
         slotRow.addChild(standard);
         slotRow.addChild(large);
         slotRow.addChild(output);

@@ -108,6 +108,34 @@ class ControlsTest {
     }
 
     @Test
+    void dropdownWorksAfterDynamicPageSwap() {
+        ComponentContext context = TestFixtures.context();
+        OreSurface root = new OreSurface(context, SurfaceVariant.PANEL);
+        root.style().width(200f).height(200f);
+        OreSurface first = new OreSurface(context, SurfaceVariant.CARD);
+        first.style().width(200f).height(200f);
+        root.addChild(first);
+        OreDropdown dropdown = new OreDropdown(context, DropdownSize.STANDARD,
+                List.of(new LiteralText("Alpha"), new LiteralText("Beta")));
+        dropdown.style().width(120f).height(20f);
+        OreSurface second = new OreSurface(context, SurfaceVariant.CARD);
+        second.style().width(200f).height(200f);
+        second.addChild(dropdown);
+
+        ComponentTree tree = new ComponentTree(root);
+        tree.layout(new Rect2f(0f, 0f, 200f, 200f));
+        root.removeChild(first);
+        root.addChild(second);
+        tree.layout(new Rect2f(0f, 0f, 200f, 200f));
+
+        float x = dropdown.bounds().x() + 5f;
+        float y = dropdown.bounds().y() + 5f;
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.POINTER_DOWN, x, y, 0, 0, '\0')));
+        assertTrue(dropdown.isOpen());
+        assertEquals(1, tree.overlayManager().overlays().size());
+    }
+
+    @Test
     void dropdownPopupKeepsTriggerAfterRebuild() {
         ComponentContext context = TestFixtures.context();
         OreDropdown dropdown = new OreDropdown(context, DropdownSize.STANDARD,

@@ -92,7 +92,7 @@ public final class Fabric26GameObjectRenderer implements IGameObjectRenderer {
         if (state instanceof LivingEntityRenderState living) {
             float bodyRotation = 180f - yaw * 20f;
             living.bodyRot = bodyRotation;
-            living.yRot = bodyRotation;
+            living.yRot = 0f;
             living.xRot = -pitch * 20f;
             float modelScale = living.scale > 0f ? living.scale : 1f;
             living.boundingBoxWidth /= modelScale;
