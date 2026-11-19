@@ -61,9 +61,10 @@ public final class Fabric26GameObjectRenderer implements IGameObjectRenderer {
                     handle == null ? "null" : handle.getClass().getName());
             return;
         }
+        float oreScale = OreGuiScale.renderScale();
         requireExtractor().blitSprite(RenderPipelines.GUI_TEXTURED, fluid.sprite(),
-                Math.round(rect.x()), Math.round(rect.y()),
-                Math.round(rect.width()), Math.round(rect.height()));
+                Math.round(rect.x() * oreScale), Math.round(rect.y() * oreScale),
+                Math.round(rect.width() * oreScale), Math.round(rect.height() * oreScale));
     }
 
     @Override
@@ -104,10 +105,11 @@ public final class Fabric26GameObjectRenderer implements IGameObjectRenderer {
         origin.set(0f, state.boundingBoxHeight * 0.5f, 0f);
         pitchRotation.identity().rotateX(pitch * 20f * DEG_TO_RAD);
         rotation.identity().rotateZ(PI).mul(pitchRotation);
-        int left = Math.round(rect.x());
-        int top = Math.round(rect.y());
-        int right = left + Math.round(rect.width());
-        int bottom = top + Math.round(rect.height());
+        float oreScale = OreGuiScale.renderScale();
+        int left = Math.round(rect.x() * oreScale);
+        int top = Math.round(rect.y() * oreScale);
+        int right = left + Math.round(rect.width() * oreScale);
+        int bottom = top + Math.round(rect.height() * oreScale);
         target.entity(state, GUI_ENTITY_SCALE, origin, rotation, pitchRotation,
                 left, top, right, bottom);
     }

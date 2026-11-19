@@ -13,6 +13,7 @@ import dev.oreui.adapter262.Fabric26TextFieldHost;
 import dev.oreui.adapter262.Fabric26TimeSource;
 import dev.oreui.adapter262.OreFabricScreenHost;
 import dev.oreui.adapter262.OreFonts;
+import dev.oreui.adapter262.OreGuiScale;
 import dev.oreui.components.AccordionMode;
 import dev.oreui.components.BadgeSeverity;
 import dev.oreui.components.ChoiceMode;
@@ -68,6 +69,7 @@ import dev.oreui.components.TextAlign;
 import dev.oreui.components.ToastSeverity;
 import dev.oreui.components.TooltipPlacement;
 import dev.oreui.components.platform.IGameObjectRenderer.IItemHandle;
+import dev.oreui.components.platform.IText;
 
 import dev.oreui.core.geom.Insets;
 import dev.oreui.core.geom.Rect2f;
@@ -148,7 +150,7 @@ public final class OreComponentShowcaseScreen extends Screen {
                 new Fabric26Clipboard(), new Fabric26SoundBridge(), new Fabric26KeybindBridge(),
                 new Fabric26TimeSource(), gameObjects);
 
-        panelHeight = Math.max(200f, Math.min(PANEL_H, height - 8f));
+        panelHeight = Math.max(200f, Math.min(PANEL_H, OreGuiScale.height() - 8f));
         root = new OreSurface(context, SurfaceVariant.PANEL);
         root.style().width(PANEL_W).height(panelHeight).padding(new Insets(PAD, PAD, PAD, PAD))
                 .gap(GAP).direction(LayoutStyle.Direction.COLUMN);
@@ -251,7 +253,8 @@ public final class OreComponentShowcaseScreen extends Screen {
             itemsWired = true;
             LOG.info("[oreui] showcase items wired to ItemStack");
         }
-        viewport.set((width - PANEL_W) * 0.5f, (height - panelHeight) * 0.5f, PANEL_W, panelHeight);
+        viewport.set((OreGuiScale.width() - PANEL_W) * 0.5f,
+                (OreGuiScale.height() - panelHeight) * 0.5f, PANEL_W, panelHeight);
         tree.layout(viewport);
         tree.update(1f / 20f);
 
@@ -613,6 +616,31 @@ public final class OreComponentShowcaseScreen extends Screen {
             showPage(pageIndex);
         });
         fontRow.addChild(fontDropdown);
+
+        Box scaleRow = card(context, page, "OreGuiScale", "独立 GUI 尺寸，默认跟随原版", 20f);
+        int[] scales = OreGuiScale.availableScales();
+        List<IText> scaleOptions = new ArrayList<>();
+        scaleOptions.add(new LiteralText("自动（跟随原版）"));
+        for (int value : scales) {
+            scaleOptions.add(new LiteralText(Integer.toString(value)));
+        }
+        int selectedScale = 0;
+        for (int i = 0; i < scales.length; i++) {
+            if (scales[i] == OreGuiScale.override()) {
+                selectedScale = i + 1;
+                break;
+            }
+        }
+        OreDropdown scaleDropdown = new OreDropdown(context, DropdownSize.STANDARD, scaleOptions);
+        scaleDropdown.style().width(240f).height(20f);
+        scaleDropdown.select(selectedScale);
+        scaleDropdown.setOnSelect(index -> {
+            OreGuiScale.setOverride(index == 0 ? OreGuiScale.SYNC : scales[index - 1]);
+            panelHeight = Math.max(200f, Math.min(PANEL_H, OreGuiScale.height() - 8f));
+            root.style().height(panelHeight);
+            showPage(pageIndex);
+        });
+        scaleRow.addChild(scaleDropdown);
         return page;
     }
 

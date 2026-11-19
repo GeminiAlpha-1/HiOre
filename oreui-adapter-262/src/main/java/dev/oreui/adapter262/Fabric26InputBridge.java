@@ -28,7 +28,7 @@ public final class Fabric26InputBridge {
                 return false;
             }
             sink.accept(new InputEvent(IInputEvent.Kind.POINTER_DOWN,
-                    (float) event.x(), (float) event.y(), event.button(), event.modifiers(), '\0'));
+                    OreGuiScale.toOreX((float) event.x()), OreGuiScale.toOreY((float) event.y()), event.button(), event.modifiers(), '\0'));
             return false;
         });
         ScreenMouseEvents.afterMouseRelease(screen).register((s, event, handled) -> {
@@ -36,7 +36,7 @@ public final class Fabric26InputBridge {
                 return false;
             }
             sink.accept(new InputEvent(IInputEvent.Kind.POINTER_UP,
-                    (float) event.x(), (float) event.y(), event.button(), event.modifiers(), '\0'));
+                    OreGuiScale.toOreX((float) event.x()), OreGuiScale.toOreY((float) event.y()), event.button(), event.modifiers(), '\0'));
             return false;
         });
         ScreenMouseEvents.afterMouseDrag(screen).register((s, event, deltaX, deltaY, handled) -> {
@@ -44,7 +44,7 @@ public final class Fabric26InputBridge {
                 return false;
             }
             sink.accept(new InputEvent(IInputEvent.Kind.POINTER_MOVE,
-                    (float) event.x(), (float) event.y(), event.button(), event.modifiers(), '\0'));
+                    OreGuiScale.toOreX((float) event.x()), OreGuiScale.toOreY((float) event.y()), event.button(), event.modifiers(), '\0'));
             return false;
         });
         ScreenMouseEvents.afterMouseScroll(screen).register((s, mouseX, mouseY, scrollX, scrollY, handled) -> {
@@ -52,7 +52,7 @@ public final class Fabric26InputBridge {
                 return false;
             }
             sink.accept(new InputEvent(IInputEvent.Kind.WHEEL,
-                    (float) mouseX, (float) mouseY, wheelDelta(scrollY), 0, 0));
+                    OreGuiScale.toOreX((float) mouseX), OreGuiScale.toOreY((float) mouseY), wheelDelta(scrollY), 0, 0));
             return false;
         });
         ScreenKeyboardEvents.afterKeyPress(screen).register((s, event) -> {

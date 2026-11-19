@@ -57,6 +57,10 @@ public final class Fabric26RenderContext implements IRenderContext {
             gameObjectRenderer.bind(extractor);
         }
         extractor.pose().pushMatrix();
+        float oreScale = OreGuiScale.renderScale();
+        if (oreScale != 1f) {
+            extractor.pose().scale(oreScale, oreScale);
+        }
     }
 
     @Override
@@ -220,8 +224,9 @@ public final class Fabric26RenderContext implements IRenderContext {
     }
 
     private void enable(Rect2f rect) {
-        extractor.enableScissor(Math.round(rect.x()), Math.round(rect.y()),
-                Math.round(rect.right()), Math.round(rect.bottom()));
+        float scale = OreGuiScale.renderScale();
+        extractor.enableScissor(Math.round(rect.x() * scale), Math.round(rect.y() * scale),
+                Math.round(rect.right() * scale), Math.round(rect.bottom() * scale));
     }
 
     private ScreenRectangle currentScissor() {
