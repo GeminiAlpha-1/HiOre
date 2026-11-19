@@ -21,11 +21,19 @@ public final class ConsumerSmoke {
         });
         scene.itemSlot(1, true, 30, 100);
         scene.itemGrid(9, 5, 12, 32);
+        scene.toggle(true);
+        scene.slider(0.4f);
+        scene.textField("consumer");
+        scene.accordion("More", "Body");
 
         scene.layout();
         scene.update(1f / 20f);
         scene.render();
 
-        System.out.println(OreUI.MOD_ID + ":" + OreUI.VERSION + " widgets=" + scene.widgetCount());
+        int widgets = scene.widgetCount();
+        if (widgets < 10) {
+            throw new IllegalStateException("consumer scene too small: " + widgets);
+        }
+        System.out.println(OreUI.MOD_ID + ":" + OreUI.VERSION + " widgets=" + widgets);
     }
 }

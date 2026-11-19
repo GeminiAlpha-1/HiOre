@@ -15,6 +15,8 @@ Bedrock OreUI-style UI library for **Minecraft Java Edition 26.2** on Fabric. Cl
 - Phase 8: complete (`OreItemSlot`/`OreItemGrid`, adapter item submission, `OreUIGalleryScreen` with all 20 v1 controls; gallery screenshots at GUI scale 2 and 3; 24 component tests).
 - Phase 9: complete (`dev.oreui.api` facade with `OreCanvas`/`OreScene`, layout budgets within 0.2/0.5ms, Maven local publishing; 34 layout tests).
 - Phase 10: complete (v2 controls: SegmentedControl, Accordion, VirtualList, ContextMenu, Keybind, FluidSlot, EntityPreview, PanelFrame; v2 gallery smoke; 35 component tests).
+- Phase 11: complete (`OreComponentShowcaseScreen`: all 28 controls across 9 pages with component labels; window-resize regression).
+- Phase 12: active (text/IME/scroll quality, per-widget fault isolation, declarative UI spike).
 
 ## Requirements
 
@@ -95,7 +97,7 @@ OreFabricScreenHost host = new OreFabricScreenHost(screen, OreTokens.DARK, textS
 host.attach();
 ```
 
-`oreui-testmod` renders `OreUIGalleryScreen` (all 20 v1 controls) for hands-on inspection.
+`oreui-testmod` renders `OreComponentShowcaseScreen` (all 28 controls, 9 pages, component names labelled) for hands-on inspection. Run it with `./gradlew :oreui-testmod:runClient`; use `Esc` to return to the title screen and `F8` to reopen.
 
 ## Build
 
@@ -125,10 +127,10 @@ World smoke binds real `ItemStack`s and renders the item grid:
 
 | Suite | Tests |
 | :--- | :--- |
-| `oreui-core` | 55 |
+| `oreui-core` | 57 |
 | `oreui-layout` | 34 (includes layout budgets) |
 | `oreui-theme` | 19 |
-| `oreui-components` | 35 |
+| `oreui-components` | 57 |
 | `oreui-adapter-262` | 10 |
 | root (`ArchUnit`) | 17 |
 
@@ -136,4 +138,4 @@ World smoke binds real `ItemStack`s and renders the item grid:
 
 LGPL-3.0-only. See [LICENSE](LICENSE). Vendored taffy code remains under its original MIT license (see `oreui-layout/TAFFY_LICENSE.txt`).
 
-This project is not affiliated with, endorsed by, or sponsored by Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios. No Bedrock Edition assets (`oreui`, `gui/dist/hbui` textures, fonts or audio) are extracted or bundled; all visuals are original or used under a permissive license.
+This project is not affiliated with, endorsed by, or sponsored by Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios. Release artifacts do not bundle Bedrock Edition assets. Local/self-use builds may reference local game resources for visual comparison; any extracted assets must be excluded from published artifacts and replaced before distribution. Release visuals are original or used under a permissive license.

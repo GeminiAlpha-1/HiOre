@@ -11,8 +11,32 @@ import net.minecraft.client.gui.screens.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public final class OreFabricScreenHost implements IScreenHost {
     private static final Logger LOG = LoggerFactory.getLogger("oreui-adapter");
+    private static final Set<OreFabricScreenHost> HOSTS = new HashSet<>();
+
+    static {
+        ScreenEvents.BEFORE_INIT.register((client, screen, width, height) -> {
+            for (OreFabricScreenHost host : List.copyOf(HOSTS)) {
+                if (host.screen == screen) {
+                    host.pendingRebind = true;
+                }
+            }
+        });
+        ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+            for (OreFabricScreenHost host : List.copyOf(HOSTS)) {
+                if (host.screen == screen && host.attached && host.pendingRebind) {
+                    host.pendingRebind = false;
+                    host.bindScreenEvents();
+                    LOG.info("[oreui] screen host rebound after resize {}x{}", width, height);
+                }
+            }
+        });
+    }
 
     private final Screen screen;
     private final OreTheme theme;
@@ -22,6 +46,7 @@ public final class OreFabricScreenHost implements IScreenHost {
     private final Fabric26GameObjectRenderer gameObjectRenderer;
     private Fabric26InputBridge inputBridge;
     private boolean attached;
+    private boolean pendingRebind;
 
     public OreFabricScreenHost(Screen screen, OreTheme theme, ITextSource textSource,
                                RenderCallback callback, IInputSink inputSink,
@@ -40,19 +65,28 @@ public final class OreFabricScreenHost implements IScreenHost {
             return;
         }
         Fabric26Pipelines.initialize();
+        bindScreenEvents();
+        HOSTS.add(this);
+        attached = true;
+        LOG.info("[oreui] screen host attached to {}", screen.getClass().getSimpleName());
+    }
+
+    private void bindScreenEvents() {
         ScreenEvents.afterBackground(screen).register((s, extractor, mouseX, mouseY, tickDelta) ->
                 render(extractor, RenderLayer.BACKGROUND, tickDelta));
         ScreenEvents.afterForeground(screen).register((s, extractor, mouseX, mouseY, tickDelta) ->
                 render(extractor, RenderLayer.FOREGROUND, tickDelta));
-
+        if (inputBridge != null) {
+            inputBridge.stop();
+        }
         inputBridge = new Fabric26InputBridge(screen, inputSink);
-        attached = true;
-        LOG.info("[oreui] screen host attached to {}", screen.getClass().getSimpleName());
     }
 
     @Override
     public void detach() {
         attached = false;
+        pendingRebind = false;
+        HOSTS.remove(this);
         if (inputBridge != null) {
             inputBridge.stop();
         }

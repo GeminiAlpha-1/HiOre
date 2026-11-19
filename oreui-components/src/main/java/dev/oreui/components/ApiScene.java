@@ -65,6 +65,44 @@ public final class ApiScene implements OreScene {
     }
 
     @Override
+    public OreScene toggle(boolean on) {
+        OreToggle toggle = new OreToggle(context);
+        toggle.setOn(on);
+        root.addChild(toggle);
+        return this;
+    }
+
+    @Override
+    public OreScene slider(float value) {
+        OreSlider slider = new OreSlider(context, SliderMode.CONTINUOUS);
+        slider.style().width(contentWidth);
+        slider.setValue(value);
+        root.addChild(slider);
+        return this;
+    }
+
+    @Override
+    public OreScene textField(String text) {
+        OreTextField field = new OreTextField(context, InputValidation.TEXT, 64);
+        field.style().width(contentWidth);
+        field.setText(text);
+        root.addChild(field);
+        return this;
+    }
+
+    @Override
+    public OreScene accordion(String title, String body) {
+        OreAccordion accordion = new OreAccordion(context, AccordionMode.SINGLE);
+        accordion.style().width(contentWidth);
+        OreLabel content = new OreLabel(context, new LiteralText(body), TypeRole.CAPTION,
+                LabelOverflow.CLIP, (int) contentWidth - 8);
+        accordion.addSection(new LiteralText(title), content);
+        accordion.setExpanded(0, true);
+        root.addChild(accordion);
+        return this;
+    }
+
+    @Override
     public OreScene itemSlot(int count, boolean damageable, int durability, int durabilityMax) {
         OreItemSlot slot = new OreItemSlot(context, SlotStyle.STANDARD_18);
         slot.setItem(new PlainItem(count, damageable, durability, durabilityMax));

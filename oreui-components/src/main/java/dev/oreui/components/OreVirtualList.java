@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.theme.ColorRole;
+import dev.oreui.theme.Radius;
 import dev.oreui.theme.SizeToken;
 
 import java.util.ArrayList;
@@ -131,16 +132,26 @@ public final class OreVirtualList<T> extends OreWidget {
         fill(ctx, ColorRole.SURFACE_SUNKEN, bounds().x(), bounds().y(), bounds().width(), bounds().height());
         outline(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y(),
                 bounds().width(), bounds().height(), BORDER);
-        for (OreWidget row : rows) {
-            row.renderBackground(ctx);
+        ctx.pushClip(bounds());
+        try {
+            for (OreWidget row : rows) {
+                row.renderBackground(ctx);
+            }
+        } finally {
+            ctx.popClip();
         }
         drawScrollbar(ctx);
     }
 
     @Override
     public void renderForeground(IRenderContext ctx) {
-        for (OreWidget row : rows) {
-            row.renderForeground(ctx);
+        ctx.pushClip(bounds());
+        try {
+            for (OreWidget row : rows) {
+                row.renderForeground(ctx);
+            }
+        } finally {
+            ctx.popClip();
         }
     }
 
@@ -158,7 +169,7 @@ public final class OreVirtualList<T> extends OreWidget {
                 height * (height / Math.max(height, content)));
         float maxScroll = Math.max(1f, content - height);
         float offset = ((height - thumbHeight) * (scroll / maxScroll));
-        fill(ctx, ColorRole.SCROLL_THUMB, x, y + offset, trackWidth, thumbHeight);
+        fillRounded(ctx, ColorRole.SCROLL_THUMB, x, y + offset, trackWidth, thumbHeight, Radius.SM.value());
     }
 
     private void rebuild() {
@@ -168,7 +179,7 @@ public final class OreVirtualList<T> extends OreWidget {
             firstIndex = 0;
             return;
         }
-        float height = bounds().height() > 0f ? bounds().height() : rowHeight;
+float height = bounds().height() > 0f ? bounds().height() : rowHeight;
         int visible = Math.max(1, (int) Math.ceil(height / rowHeight));
         int first = Math.max(0, (int) (scroll / rowHeight) - 1);
         int last = Math.min(items.size() - 1, first + visible + 1);

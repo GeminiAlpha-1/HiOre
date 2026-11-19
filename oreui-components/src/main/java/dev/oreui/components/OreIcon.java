@@ -18,32 +18,42 @@ public final class OreIcon extends OreWidget {
     public void renderBackground(IRenderContext ctx) {
         float x = bounds().x();
         float y = bounds().y();
+        float k = size / 12f;
+        float px = Math.max(1f, Math.round(2f * k));
         ColorRole role = ColorRole.ICON_PRIMARY;
         switch (kind) {
             case CHECK -> {
-                fill(ctx, role, x + size * 0.2f, y + size * 0.5f, 2f, 2f);
-                fill(ctx, role, x + size * 0.4f, y + size * 0.7f, 2f, 2f);
-                fill(ctx, role, x + size * 0.6f, y + size * 0.4f, 2f, 2f);
+                fill(ctx, role, x + 2f * k, y + 6f * k, px, px);
+                fill(ctx, role, x + 4f * k, y + 8f * k, px, px);
+                fill(ctx, role, x + 6f * k, y + 6f * k, px, px);
+                fill(ctx, role, x + 8f * k, y + 4f * k, px, px);
             }
             case CHEVRON_DOWN -> {
-                fill(ctx, role, x + size * 0.25f, y + size * 0.4f, 2f, 2f);
-                fill(ctx, role, x + size * 0.45f, y + size * 0.6f, 2f, 2f);
-                fill(ctx, role, x + size * 0.65f, y + size * 0.4f, 2f, 2f);
+                fill(ctx, role, x + 2f * k, y + 4f * k, px, px);
+                fill(ctx, role, x + 4f * k, y + 6f * k, px, px);
+                fill(ctx, role, x + 6f * k, y + 6f * k, px, px);
+                fill(ctx, role, x + 8f * k, y + 4f * k, px, px);
             }
             case CLOSE -> {
-                fill(ctx, role, x + size * 0.25f, y + size * 0.25f, 2f, 2f);
-                fill(ctx, role, x + size * 0.5f, y + size * 0.45f, 2f, 2f);
-                fill(ctx, role, x + size * 0.7f, y + size * 0.7f, 2f, 2f);
-                fill(ctx, role, x + size * 0.7f, y + size * 0.25f, 2f, 2f);
-                fill(ctx, role, x + size * 0.25f, y + size * 0.7f, 2f, 2f);
+                fill(ctx, role, x + 2f * k, y + 2f * k, px, px);
+                fill(ctx, role, x + 4f * k, y + 4f * k, px, px);
+                fill(ctx, role, x + 6f * k, y + 6f * k, px, px);
+                fill(ctx, role, x + 8f * k, y + 8f * k, px, px);
+                fill(ctx, role, x + 8f * k, y + 2f * k, px, px);
+                fill(ctx, role, x + 6f * k, y + 4f * k, px, px);
+                fill(ctx, role, x + 4f * k, y + 6f * k, px, px);
+                fill(ctx, role, x + 2f * k, y + 8f * k, px, px);
             }
             case SEARCH -> {
-                fill(ctx, role, x + size * 0.2f, y + size * 0.2f, size * 0.5f, 2f);
-                fill(ctx, role, x + size * 0.2f, y + size * 0.2f, 2f, size * 0.5f);
-                fill(ctx, role, x + size * 0.65f, y + size * 0.2f, 2f, size * 0.5f);
-                fill(ctx, role, x + size * 0.7f, y + size * 0.7f, 3f, 2f);
+                float stroke = Math.max(1f, k);
+                fill(ctx, role, x + 2f * k, y + 2f * k, 6f * k, stroke);
+                fill(ctx, role, x + 2f * k, y + 2f * k, stroke, 6f * k);
+                fill(ctx, role, x + 7f * k, y + 2f * k, stroke, 6f * k);
+                fill(ctx, role, x + 2f * k, y + 7f * k, 6f * k, stroke);
+                fill(ctx, role, x + 8f * k, y + 8f * k, Math.max(2f, 3f * k), Math.max(1f, 2f * k));
             }
-            case DOT -> fill(ctx, role, x + size * 0.35f, y + size * 0.35f, size * 0.3f, size * 0.3f);
+            case DOT -> fill(ctx, role, x + 4f * k, y + 4f * k,
+                    Math.max(2f, 4f * k), Math.max(2f, 4f * k));
         }
     }
 }

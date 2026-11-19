@@ -52,7 +52,7 @@ public final class Fabric26InputBridge {
                 return false;
             }
             sink.accept(new InputEvent(IInputEvent.Kind.WHEEL,
-                    (float) mouseX, (float) mouseY, (int) Math.signum(scrollY), 0, '\0'));
+                    (float) mouseX, (float) mouseY, wheelDelta(scrollY), 0, 0));
             return false;
         });
         ScreenKeyboardEvents.afterKeyPress(screen).register((s, event) -> {
@@ -70,13 +70,21 @@ public final class Fabric26InputBridge {
         ScreenKeyboardEvents.afterCharType(screen).register((s, event) -> {
             if (active) {
                 sink.accept(new InputEvent(IInputEvent.Kind.CHAR_TYPED, 0f, 0f,
-                        event.codepoint(), 0, (char) event.codepoint()));
+                        event.codepoint(), 0, event.codepoint()));
             }
         });
     }
 
     public void stop() {
         active = false;
+    }
+
+    private static int wheelDelta(double scrollY) {
+        int delta = (int) Math.round(scrollY);
+        if (delta == 0 && scrollY != 0.0) {
+            delta = scrollY > 0.0 ? 1 : -1;
+        }
+        return delta;
     }
 
     public boolean isActive() {

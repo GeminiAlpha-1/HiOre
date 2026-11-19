@@ -47,10 +47,14 @@ public final class OreToggle extends OreInteractive {
         float h = bounds().height();
         fill(ctx, on ? ColorRole.ACCENT_DEFAULT : ColorRole.SURFACE_SUNKEN, x, y, w, h);
         outline(ctx, ColorRole.BORDER_OUTER, x, y, w, h, 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, w - 2f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + h - 2f, w - 2f, 1f);
         float knobX = x + 2f + (w - 14f) * knob.value();
         float knobY = y + 2f;
         fill(ctx, ColorRole.SURFACE_RAISED_DEFAULT, knobX, knobY, 10f, h - 4f);
         outline(ctx, ColorRole.BORDER_OUTER, knobX, knobY, 10f, h - 4f, 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, knobX + 1f, knobY + 1f, 8f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, knobX + 1f, knobY + h - 6f, 8f, 1f);
         drawFocus(ctx);
     }
 }

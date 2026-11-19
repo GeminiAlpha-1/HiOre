@@ -30,7 +30,7 @@ public final class Fabric26TextMeasurer implements ITextMeasurer {
         TypeStyle style = theme.type(role);
         int fullWidth = font.width(resolved);
         if (!(maxWidth > 0f) || fullWidth <= maxWidth) {
-            return new TextMetrics(fullWidth, style.lineHeight(), List.of(resolved));
+            return new TextMetrics(fullWidth, style.lineHeight(), font.lineHeight, List.of(resolved));
         }
         TextLayout layout = new TextLayout();
         TextGeometry.wrap(resolved, maxWidth, value -> font.width(value.toString()), 64, layout);
@@ -38,6 +38,6 @@ public final class Fabric26TextMeasurer implements ITextMeasurer {
         for (String line : layout.lines()) {
             widest = Math.max(widest, font.width(line));
         }
-        return new TextMetrics(widest, layout.size() * style.lineHeight(), layout.lines());
+        return new TextMetrics(widest, layout.size() * style.lineHeight(), font.lineHeight, layout.lines());
     }
 }

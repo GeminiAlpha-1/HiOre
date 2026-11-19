@@ -108,7 +108,7 @@ public final class OreDropdown extends OreInteractive {
     public void renderForeground(IRenderContext ctx) {
         IText trigger = selected >= 0 ? items.get(selected) : new LiteralText("Select…");
         TextMetrics metrics = context.textMeasurer().measure(trigger, TypeRole.LABEL, 0f);
-        text(ctx, trigger, bounds().x() + 5f, bounds().y() + (bounds().height() - metrics.height()) * 0.5f,
+        text(ctx, trigger, bounds().x() + 5f, bounds().y() + textCenterY(0f, bounds().height(), metrics),
                 TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
     }
 

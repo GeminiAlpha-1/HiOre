@@ -15,6 +15,23 @@ public interface IRenderContext {
 
     void submitText(IText text, float x, float y, TypeRole role, ColorRole color);
 
+    default void submitText(IText text, float x, float y, TypeRole role, ColorRole color, boolean shadow) {
+        submitText(text, x, y, role, color);
+    }
+
+    default void submitTextClipped(IText text, float x, float y, TypeRole role, ColorRole color,
+                                   Rect2f clip) {
+        if (clip == null || clip.isEmpty()) {
+            return;
+        }
+        pushClip(clip);
+        try {
+            submitText(text, x, y, role, color);
+        } finally {
+            popClip();
+        }
+    }
+
     void pushClip(Rect2f rect);
 
     void popClip();

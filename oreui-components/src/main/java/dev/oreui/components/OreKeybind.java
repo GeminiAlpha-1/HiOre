@@ -74,6 +74,10 @@ public final class OreKeybind extends OreInteractive {
                 : conflict ? ColorRole.DANGER_DEFAULT : ColorRole.BORDER_OUTER;
         outline(ctx, border, bounds().x(), bounds().y(), bounds().width(), bounds().height(),
                 capturing ? 2f : BORDER);
+        fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 1f, bounds().y() + 1f,
+                bounds().width() - 2f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 1f, bounds().y() + bounds().height() - 2f,
+                bounds().width() - 2f, 1f);
         drawFocus(ctx);
     }
 
@@ -81,12 +85,12 @@ public final class OreKeybind extends OreInteractive {
     public void renderForeground(IRenderContext ctx) {
         IText label = new LiteralText(capturing ? "…" : bridge.displayName(keyCode));
         TextMetrics metrics = context.textMeasurer().measure(label, TypeRole.LABEL, 0f);
-        text(ctx, label, bounds().x() + 6f, bounds().y() + (bounds().height() - metrics.height()) * 0.5f,
+        text(ctx, label, bounds().x() + 6f, bounds().y() + textCenterY(0f, bounds().height(), metrics),
                 TypeRole.LABEL, conflict ? ColorRole.DANGER_DEFAULT : ColorRole.TEXT_PRIMARY);
         if (conflict) {
             IText mark = new LiteralText("!");
             text(ctx, mark, bounds().right() - 10f,
-                    bounds().y() + (bounds().height() - metrics.height()) * 0.5f,
+                    bounds().y() + textCenterY(0f, bounds().height(), metrics),
                     TypeRole.LABEL, ColorRole.DANGER_DEFAULT);
         }
     }

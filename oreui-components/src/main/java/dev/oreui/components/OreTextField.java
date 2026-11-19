@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.ITextInputHost;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.Motion;
 import dev.oreui.theme.TypeRole;
@@ -14,13 +15,23 @@ public final class OreTextField extends OreInteractive {
     private final int maxLength;
     private final InputValidation validation;
     private final Deque<String> undo = new ArrayDeque<>();
+    private final ITextInputHost inputHost;
     private int caret;
     private float blinkElapsed;
 
     public OreTextField(ComponentContext context, InputValidation validation, int maxLength) {
+        this(context, validation, maxLength, null);
+    }
+
+    public OreTextField(ComponentContext context, InputValidation validation, int maxLength,
+                        ITextInputHost inputHost) {
         super(context);
         this.validation = validation;
         this.maxLength = maxLength;
+        this.inputHost = inputHost;
+        if (inputHost != null) {
+            inputHost.setMaxLength(maxLength);
+        }
         style().width(180f).height(20f);
     }
 
@@ -36,6 +47,9 @@ public final class OreTextField extends OreInteractive {
         value.setLength(0);
         value.append(next);
         caret = value.length();
+        if (inputHost != null) {
+            inputHost.setValue(next);
+        }
         markDirty();
     }
 
@@ -47,8 +61,19 @@ public final class OreTextField extends OreInteractive {
     public void setFocused(boolean focused) {
         super.setFocused(focused);
         blinkElapsed = 0f;
+        if (inputHost != null) {
+            inputHost.setFocused(focused);
+        }
         if (focused) {
-            caret = value.length();
+            caret = inputHost != null ? inputHost.cursorPosition() : value.length();
+        }
+    }
+
+    @Override
+    public void syncFrames() {
+        super.syncFrames();
+        if (inputHost != null) {
+            inputHost.setBounds(bounds().x(), bounds().y(), bounds().width(), bounds().height());
         }
     }
 
@@ -67,27 +92,34 @@ public final class OreTextField extends OreInteractive {
         if (!isEnabled()) {
             return false;
         }
+        if (inputHost != null) {
+            boolean handled = inputHost.keyPressed(key, modifiers);
+            syncFromHost();
+            return handled;
+        }
         if (key == KeyCodes.BACKSPACE) {
             if (caret > 0) {
+                int cp = value.codePointBefore(caret);
                 pushUndo();
-                value.deleteCharAt(caret - 1);
-                caret--;
+                value.delete(caret - Character.charCount(cp), caret);
+                caret -= Character.charCount(cp);
             }
             return true;
         }
         if (key == KeyCodes.DELETE) {
             if (caret < value.length()) {
+                int cp = value.codePointAt(caret);
                 pushUndo();
-                value.deleteCharAt(caret);
+                value.delete(caret, caret + Character.charCount(cp));
             }
             return true;
         }
         if (key == KeyCodes.LEFT) {
-            caret = Math.max(0, caret - 1);
+            caret = caret > 0 ? caret - Character.charCount(value.codePointBefore(caret)) : 0;
             return true;
         }
         if (key == KeyCodes.RIGHT) {
-            caret = Math.min(value.length(), caret + 1);
+            caret = caret < value.length() ? caret + Character.charCount(value.codePointAt(caret)) : caret;
             return true;
         }
         if (key == KeyCodes.HOME) {
@@ -119,33 +151,64 @@ public final class OreTextField extends OreInteractive {
     }
 
     @Override
-    public boolean charTyped(char character) {
-        if (!isEnabled() || !valid(character) || value.length() >= maxLength) {
+    public boolean charTyped(int codepoint) {
+        if (!isEnabled() || !valid(codepoint) || value.length() >= maxLength) {
             return false;
         }
-        insert(String.valueOf(character));
+        if (inputHost != null) {
+            boolean handled = inputHost.charTyped(codepoint);
+            syncFromHost();
+            return handled;
+        }
+        String inserted = new String(Character.toChars(codepoint));
+        if (value.length() + inserted.length() > maxLength) {
+            return false;
+        }
+        insert(inserted);
         return true;
+    }
+
+    private void syncFromHost() {
+        String next = inputHost.value();
+        value.setLength(0);
+        value.append(next);
+        caret = Math.min(inputHost.cursorPosition(), value.length());
+        markDirty();
     }
 
     private void insert(String text) {
         if (text == null || text.isEmpty()) {
             return;
         }
+        if (inputHost != null) {
+            inputHost.insertText(text);
+            syncFromHost();
+            return;
+        }
         int room = maxLength - value.length();
         if (room <= 0) {
             return;
         }
-        String insert = text.substring(0, Math.min(room, text.length()));
+        String insert = text;
+        if (insert.length() > room) {
+            insert = insert.substring(0, room);
+            if (!insert.isEmpty() && Character.isHighSurrogate(insert.charAt(insert.length() - 1))) {
+                insert = insert.substring(0, insert.length() - 1);
+            }
+        }
+        if (insert.isEmpty()) {
+            return;
+        }
         pushUndo();
         value.insert(caret, insert);
         caret += insert.length();
     }
 
-    private boolean valid(char character) {
+    private boolean valid(int codepoint) {
         return switch (validation) {
-            case INT -> Character.isDigit(character);
-            case FLOAT -> Character.isDigit(character) || character == '.';
-            case TEXT, SEARCH -> character >= ' ' && character != 127;
+            case INT -> Character.isDigit(codepoint);
+            case FLOAT -> Character.isDigit(codepoint) || codepoint == '.';
+            case TEXT, SEARCH -> Character.isValidCodePoint(codepoint) && codepoint >= ' ' && codepoint != 127;
         };
     }
 

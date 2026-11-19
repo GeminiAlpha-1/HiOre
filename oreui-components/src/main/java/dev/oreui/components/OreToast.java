@@ -37,6 +37,10 @@ public final class OreToast extends OreWidget {
         }
         fill(ctx, ColorRole.SURFACE_CARD, bounds().x(), bounds().y(), bounds().width(), bounds().height());
         outline(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y(), bounds().width(), bounds().height(), 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 4f, bounds().y() + 1f,
+                bounds().width() - 5f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 4f, bounds().y() + bounds().height() - 2f,
+                bounds().width() - 5f, 1f);
         fill(ctx, accent(), bounds().x(), bounds().y(), 4f, bounds().height());
     }
 

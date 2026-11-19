@@ -38,6 +38,18 @@ loom {
             if (project.hasProperty('oruiV2')) {
                 vmArg "-Dorui.v2=${project.property('oruiV2')}"
             }
+            if (project.hasProperty('oruiShowcase')) {
+                vmArg "-Dorui.showcase=${project.property('oruiShowcase')}"
+            }
+            if (project.hasProperty('oruiPage')) {
+                vmArg "-Dorui.page=${project.property('oruiPage')}"
+            }
+            if (project.hasProperty('oruiDump')) {
+                vmArg "-Dorui.dump=${project.property('oruiDump')}"
+            }
+            if (project.hasProperty('oruiResizeTest')) {
+                vmArg "-Dorui.resizeTest=${project.property('oruiResizeTest')}"
+            }
             if (System.getProperty('orui.smoke') != null) {
                 vmArg "-Dorui.smoke=${System.getProperty('orui.smoke')}"
             }

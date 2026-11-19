@@ -32,6 +32,7 @@ public record StateStyle(
                 case PRIMARY -> primary(state);
                 case SECONDARY -> secondary(state);
                 case DANGER -> danger(state);
+                case HERO -> hero(state);
                 case GHOST -> ghost(state);
             };
         }
@@ -78,6 +79,21 @@ public record StateStyle(
                         ColorRole.DANGER_DEFAULT, ColorRole.DANGER_PRESSED, ColorRole.TEXT_ON_ACCENT,
                         2, 0);
                 case DISABLED -> disabled(ColorRole.DANGER_DISABLED, ColorRole.TEXT_DISABLED);
+            };
+        }
+
+        private static StateStyle hero(ControlState state) {
+            return switch (state) {
+                case DEFAULT, FOCUSED -> style(ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_HOVER,
+                        ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
+                        0, Border.LIP_BUTTON.value());
+                case HOVER -> style(ColorRole.ACCENT_HOVER, ColorRole.ACCENT_HOVER,
+                        ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_LIP, ColorRole.TEXT_ON_ACCENT,
+                        0, Border.LIP_BUTTON.value());
+                case PRESSED -> style(ColorRole.ACCENT_PRESSED, ColorRole.ACCENT_PRESSED,
+                        ColorRole.ACCENT_DEFAULT, ColorRole.ACCENT_PRESSED, ColorRole.TEXT_ON_ACCENT,
+                        2, 0);
+                case DISABLED -> disabled(ColorRole.ACCENT_DISABLED, ColorRole.TEXT_DISABLED);
             };
         }
 

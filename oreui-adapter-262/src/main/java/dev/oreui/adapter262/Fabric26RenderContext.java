@@ -5,6 +5,7 @@ import dev.oreui.components.platform.IText;
 import dev.oreui.components.platform.ITextSource;
 import dev.oreui.core.color.ColorMath;
 import dev.oreui.core.geom.Rect2f;
+import dev.oreui.core.text.TextGeometry;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.OreTheme;
 import dev.oreui.theme.TypeRole;
@@ -19,10 +20,12 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+
 public final class Fabric26RenderContext implements IRenderContext {
     private static final Logger LOG = LoggerFactory.getLogger("oreui-adapter");
     private static final Field GUI_STATE = guiStateField();
     private static final AtomicBoolean SDF_LOGGED = new AtomicBoolean();
+
 
     private final GuiGraphicsExtractor extractor;
     private final OreTheme theme;
@@ -106,10 +109,41 @@ public final class Fabric26RenderContext implements IRenderContext {
 
     @Override
     public void submitText(IText text, float x, float y, TypeRole role, ColorRole color) {
+        submitText(text, x, y, role, color, false);
+    }
+
+    @Override
+    public void submitText(IText text, float x, float y, TypeRole role, ColorRole color, boolean shadow) {
         requireBegun();
         String resolved = textSource.resolve(text);
+
         extractor.text(Minecraft.getInstance().font, resolved, Math.round(x), Math.round(y),
-                applyOpacity(theme.color(color)));
+                applyOpacity(theme.color(color)), shadow);
+    }
+
+    @Override
+    public void submitTextClipped(IText text, float x, float y, TypeRole role, ColorRole color,
+                                  Rect2f clip) {
+        requireBegun();
+        if (clip == null || clip.isEmpty()) {
+            return;
+        }
+        var font = Minecraft.getInstance().font;
+        if (y + font.lineHeight <= clip.y() || y >= clip.bottom()) {
+            return;
+        }
+        float maxWidth = clip.right() - Math.max(x, clip.x());
+        if (maxWidth <= 0f) {
+            return;
+        }
+        String resolved = textSource.resolve(text);
+        String clipped = font.width(resolved) <= maxWidth ? resolved
+                : TextGeometry.clipToWidth(resolved, maxWidth, value -> font.width(value.toString()));
+        if (clipped.isEmpty()) {
+            return;
+        }
+        extractor.text(font, clipped, Math.round(Math.max(x, clip.x())), Math.round(y),
+                applyOpacity(theme.color(color)), false);
     }
 
     @Override

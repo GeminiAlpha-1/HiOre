@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.Motion;
 import dev.oreui.theme.TypeRole;
@@ -69,8 +70,9 @@ public final class OreProgressBar extends OreWidget {
         if (text == null) {
             return;
         }
-        float width = context.textMeasurer().measure(text, TypeRole.CAPTION, 0f).width();
-        text(ctx, text, bounds().x() + (bounds().width() - width) * 0.5f,
-                bounds().y() + 5f, TypeRole.CAPTION, ColorRole.TEXT_PRIMARY);
+        TextMetrics metrics = context.textMeasurer().measure(text, TypeRole.CAPTION, 0f);
+        text(ctx, text, bounds().x() + (bounds().width() - metrics.width()) * 0.5f,
+                textCenterY(bounds().y(), bounds().height(), metrics),
+                TypeRole.CAPTION, ColorRole.TEXT_PRIMARY);
     }
 }

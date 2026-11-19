@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.core.geom.Rect2f;
 import dev.oreui.layout.LayoutNode;
 import dev.oreui.layout.LayoutStyle;
@@ -19,6 +20,7 @@ public abstract class OreWidget {
     private final List<OreWidget> children = new ArrayList<>();
     private OreWidget parent;
     private OverlayManager overlayManager;
+    private WidgetFailure failure;
 
     protected OreWidget(ComponentContext context) {
         this.context = context;
@@ -42,6 +44,20 @@ public abstract class OreWidget {
 
     public OreWidget parent() {
         return parent;
+    }
+
+    public boolean isQuarantined() {
+        return failure != null;
+    }
+
+    public WidgetFailure failure() {
+        return failure;
+    }
+
+    void quarantine(String phase, Throwable cause) {
+        if (failure == null) {
+            failure = new WidgetFailure(this, phase, cause);
+        }
     }
 
     public OreWidget addChild(OreWidget child) {
@@ -71,33 +87,79 @@ public abstract class OreWidget {
     }
 
     public void syncFrames() {
+        if (isQuarantined()) {
+            return;
+        }
         bounds.set(layout.frame());
         for (OreWidget child : children) {
-            child.syncFrames();
+            if (child.isQuarantined()) {
+                continue;
+            }
+            try {
+                child.syncFrames();
+            } catch (Throwable throwable) {
+                child.quarantine("layout", throwable);
+            }
         }
     }
 
     public void update(float deltaSeconds) {
+        if (isQuarantined()) {
+            return;
+        }
         for (OreWidget child : children) {
-            child.update(deltaSeconds);
+            if (child.isQuarantined()) {
+                continue;
+            }
+            try {
+                child.update(deltaSeconds);
+            } catch (Throwable throwable) {
+                child.quarantine("update", throwable);
+            }
         }
     }
 
     public void renderBackground(IRenderContext ctx) {
+        if (isQuarantined()) {
+            return;
+        }
         for (OreWidget child : children) {
-            child.renderBackground(ctx);
+            if (child.isQuarantined()) {
+                continue;
+            }
+            try {
+                child.renderBackground(ctx);
+            } catch (Throwable throwable) {
+                child.quarantine("renderBackground", throwable);
+            }
         }
     }
 
     public void renderForeground(IRenderContext ctx) {
+        if (isQuarantined()) {
+            return;
+        }
         for (OreWidget child : children) {
-            child.renderForeground(ctx);
+            if (child.isQuarantined()) {
+                continue;
+            }
+            try {
+                child.renderForeground(ctx);
+            } catch (Throwable throwable) {
+                child.quarantine("renderForeground", throwable);
+            }
         }
     }
 
     public OreWidget hitTest(float x, float y) {
+        if (isQuarantined()) {
+            return null;
+        }
         for (int i = children.size() - 1; i >= 0; i--) {
             OreWidget child = children.get(i);
+            if (child.isQuarantined()) {
+                continue;
+            }
             if (child.contains(x, y)) {
                 OreWidget hit = child.hitTest(x, y);
                 if (hit != null) {
@@ -109,7 +171,7 @@ public abstract class OreWidget {
     }
 
     public boolean contains(float x, float y) {
-        return !bounds.isEmpty() && x >= bounds.x() && x < bounds.right()
+        return !isQuarantined() && !bounds.isEmpty() && x >= bounds.x() && x < bounds.right()
                 && y >= bounds.y() && y < bounds.bottom();
     }
 
@@ -139,7 +201,7 @@ public abstract class OreWidget {
         return false;
     }
 
-    public boolean charTyped(char character) {
+    public boolean charTyped(int codepoint) {
         return false;
     }
 
@@ -174,6 +236,15 @@ public abstract class OreWidget {
         ctx.submitPixelRect(scratch, color(role));
     }
 
+    protected void fillRounded(IRenderContext ctx, ColorRole role, float x, float y,
+                               float width, float height, float radius) {
+        if (width <= 0f || height <= 0f) {
+            return;
+        }
+        scratch.set(x, y, width, height);
+        ctx.submitSdfRect(scratch, color(role), radius, 0f);
+    }
+
     protected void outline(IRenderContext ctx, ColorRole role, float x, float y,
                            float width, float height, float thickness) {
         fill(ctx, role, x, y, width, thickness);
@@ -184,5 +255,14 @@ public abstract class OreWidget {
 
     protected void text(IRenderContext ctx, IText text, float x, float y, TypeRole role, ColorRole color) {
         ctx.submitText(text, x, y, role, color);
+    }
+
+    protected void textClipped(IRenderContext ctx, IText text, float x, float y, TypeRole role,
+                               ColorRole color, Rect2f clip) {
+        ctx.submitTextClipped(text, x, y, role, color, clip);
+    }
+
+    protected float textCenterY(float top, float height, TextMetrics metrics) {
+        return top + (height - metrics.glyphHeight()) * 0.5f;
     }
 }

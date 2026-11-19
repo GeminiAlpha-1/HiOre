@@ -42,6 +42,7 @@ public final class OreTokens {
         builder.override(ColorRole.TEXT_DISABLED, 0xFF6E7073);
         builder.override(ColorRole.TEXT_ON_LIGHT, 0xFF1E1E1F);
         builder.override(ColorRole.TEXT_ON_ACCENT, 0xFFFFFFFF);
+        builder.override(ColorRole.TEXT_SHADOW, 0x4D000000);
         builder.override(ColorRole.FOCUS_RING, 0xFFFFFFFF);
         builder.override(ColorRole.TOOLTIP_BG, 0xF2141416);
         builder.override(ColorRole.TOOLTIP_BORDER, 0xFF525461);

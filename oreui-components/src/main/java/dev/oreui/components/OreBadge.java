@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.TypeRole;
 
@@ -13,7 +14,7 @@ public final class OreBadge extends OreWidget {
         super(context);
         this.text = text;
         this.severity = severity;
-        style().width(80f).height(12f);
+        style().width(80f).height(14f);
     }
 
     @Override
@@ -24,7 +25,9 @@ public final class OreBadge extends OreWidget {
 
     @Override
     public void renderForeground(IRenderContext ctx) {
-        text(ctx, text, bounds().x() + 4f, bounds().y() + 1f, TypeRole.LABEL, ColorRole.TEXT_ON_ACCENT);
+        TextMetrics metrics = context.textMeasurer().measure(text, TypeRole.LABEL, 0f);
+        text(ctx, text, bounds().x() + 4f,
+                textCenterY(bounds().y(), bounds().height(), metrics), TypeRole.LABEL, ColorRole.TEXT_ON_ACCENT);
     }
 
     private ColorRole background() {

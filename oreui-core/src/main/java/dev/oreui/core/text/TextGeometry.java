@@ -97,6 +97,29 @@ public final class TextGeometry {
         return truncate(text, maxWidth, measure);
     }
 
+    public static String clipToWidth(String text, float maxWidth, TextMeasure measure) {
+        if (text == null || text.isEmpty() || !(maxWidth > 0f)) {
+            return "";
+        }
+        if (measure == null) {
+            throw new NullPointerException("measure");
+        }
+        if (measure.width(text) <= maxWidth) {
+            return text;
+        }
+        StringBuilder out = new StringBuilder();
+        for (int index = 0; index < text.length(); ) {
+            int codePoint = text.codePointAt(index);
+            out.appendCodePoint(codePoint);
+            if (measure.width(out) > maxWidth) {
+                out.setLength(out.length() - Character.charCount(codePoint));
+                break;
+            }
+            index += Character.charCount(codePoint);
+        }
+        return out.toString();
+    }
+
     private static String truncate(String text, float maxWidth, TextMeasure measure) {
         StringBuilder candidate = new StringBuilder(text);
         while (true) {

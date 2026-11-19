@@ -106,6 +106,10 @@ public final class OreContextMenu extends OreWidget {
             fill(ctx, ColorRole.SURFACE_CARD, bounds().x(), bounds().y(), bounds().width(), bounds().height());
             outline(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y(),
                     bounds().width(), bounds().height(), 1f);
+            fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 1f, bounds().y() + 1f,
+                    bounds().width() - 2f, 1f);
+            fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 1f, bounds().y() + bounds().height() - 2f,
+                    bounds().width() - 2f, 1f);
             for (int i = 0; i < entries.size(); i++) {
                 if (entries.get(i).danger()) {
                     fill(ctx, ColorRole.DANGER_DEFAULT, bounds().x() + 1f,
@@ -123,7 +127,7 @@ public final class OreContextMenu extends OreWidget {
                 ContextMenuEntry entry = entries.get(i);
                 TextMetrics metrics = context.textMeasurer().measure(entry.label(), TypeRole.LABEL, 0f);
                 text(ctx, entry.label(), bounds().x() + 10f,
-                        bounds().y() + i * ITEM_HEIGHT + (ITEM_HEIGHT - metrics.height()) * 0.5f,
+                        textCenterY(bounds().y() + i * ITEM_HEIGHT, ITEM_HEIGHT, metrics),
                         TypeRole.LABEL, entry.danger() ? ColorRole.TEXT_ON_ACCENT : ColorRole.TEXT_PRIMARY);
             }
         }

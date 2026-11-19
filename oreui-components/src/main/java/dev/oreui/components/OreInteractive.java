@@ -9,6 +9,7 @@ public abstract class OreInteractive extends OreWidget {
     private boolean hovered;
     private boolean pressed;
     private boolean focused;
+    private boolean focusRingVisible;
 
     protected OreInteractive(ComponentContext context) {
         super(context);
@@ -46,6 +47,14 @@ public abstract class OreInteractive extends OreWidget {
         return focused;
     }
 
+    public boolean isFocusRingVisible() {
+        return focusRingVisible;
+    }
+
+    public void setFocusRingVisible(boolean visible) {
+        this.focusRingVisible = visible;
+    }
+
     @Override
     public void setFocused(boolean focused) {
         this.focused = focused;
@@ -58,7 +67,7 @@ public abstract class OreInteractive extends OreWidget {
 
     @Override
     public boolean isFocusable() {
-        return enabled;
+        return enabled && !isQuarantined();
     }
 
     @Override
@@ -98,7 +107,7 @@ public abstract class OreInteractive extends OreWidget {
     }
 
     protected void drawFocus(IRenderContext ctx) {
-        if (focused && enabled) {
+        if (focusRingVisible && focused && enabled) {
             outline(ctx, ColorRole.FOCUS_RING, bounds().x() - 2f, bounds().y() - 2f,
                     bounds().width() + 4f, bounds().height() + 4f, 2f);
         }

@@ -47,6 +47,10 @@ public final class OreTabs extends OreInteractive {
     public void renderBackground(IRenderContext ctx) {
         fill(ctx, ColorRole.SURFACE_CARD, bounds().x(), bounds().y(), bounds().width(), bounds().height());
         outline(ctx, ColorRole.BORDER_OUTER, bounds().x(), bounds().y(), bounds().width(), bounds().height(), 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, bounds().x() + 1f, bounds().y() + 1f,
+                bounds().width() - 2f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, bounds().x() + 1f, bounds().y() + bounds().height() - 2f,
+                bounds().width() - 2f, 1f);
         if (orientation == Orientation.HORIZONTAL) {
             float tabWidth = bounds().width() / labels.size();
             fill(ctx, ColorRole.ACCENT_DEFAULT, bounds().x() + selected * tabWidth,
@@ -68,11 +72,11 @@ public final class OreTabs extends OreInteractive {
             if (orientation == Orientation.HORIZONTAL) {
                 float tabWidth = bounds().width() / labels.size();
                 x = bounds().x() + i * tabWidth + (tabWidth - metrics.width()) * 0.5f;
-                y = bounds().y() + (bounds().height() - metrics.height()) * 0.5f;
+                y = textCenterY(bounds().y(), bounds().height(), metrics);
             } else {
                 float tabHeight = bounds().height() / labels.size();
                 x = bounds().x() + 6f;
-                y = bounds().y() + i * tabHeight + (tabHeight - metrics.height()) * 0.5f;
+                y = textCenterY(bounds().y() + i * tabHeight, tabHeight, metrics);
             }
             text(ctx, label, x, y, TypeRole.LABEL,
                     i == selected ? ColorRole.TEXT_PRIMARY : ColorRole.TEXT_MUTED);

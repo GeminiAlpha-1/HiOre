@@ -39,6 +39,8 @@ public final class OreChoiceBox extends OreInteractive {
         float y = bounds().y();
         fill(ctx, ColorRole.SURFACE_SUNKEN, x, y, 16f, 16f);
         outline(ctx, ColorRole.BORDER_OUTER, x, y, 16f, 16f, 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, x + 1f, y + 1f, 14f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, x + 1f, y + 14f, 14f, 1f);
         if (selected) {
             fill(ctx, ColorRole.ACCENT_DEFAULT, x + 2f, y + 2f, 12f, 12f);
             if (mode == ChoiceMode.RADIO_SINGLE) {

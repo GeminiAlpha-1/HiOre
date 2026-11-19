@@ -35,6 +35,7 @@ public enum ColorRole {
     TEXT_DISABLED,
     TEXT_ON_LIGHT,
     TEXT_ON_ACCENT,
+    TEXT_SHADOW,
     FOCUS_RING,
     TOOLTIP_BG,
     TOOLTIP_BORDER,

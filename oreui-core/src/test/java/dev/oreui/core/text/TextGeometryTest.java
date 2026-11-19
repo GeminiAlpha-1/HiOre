@@ -53,6 +53,23 @@ class TextGeometryTest {
     }
 
     @Test
+    void clipToWidthKeepsWholeCodePoints() {
+        assertEquals("abcdef", TextGeometry.clipToWidth("abcdef", 36, WIDTH));
+        assertEquals("abc", TextGeometry.clipToWidth("abcdef", 18, WIDTH));
+        assertEquals("", TextGeometry.clipToWidth("abcdef", 0, WIDTH));
+        assertEquals("", TextGeometry.clipToWidth("abcdef", -1, WIDTH));
+    }
+
+    @Test
+    void clipToWidthDoesNotSplitSurrogatePairsOrCjk() {
+        String text = "a\uD83D\uDE00中";
+        String clipped = TextGeometry.clipToWidth(text, 12, WIDTH);
+        assertEquals("a\uD83D\uDE00", clipped);
+        assertTrue(clipped.length() == 3);
+        assertEquals("", TextGeometry.clipToWidth(text, 5, WIDTH));
+    }
+
+    @Test
     void maxLinesTruncatesWithEllipsis() {
         TextLayout layout = new TextLayout();
         TextGeometry.wrap("这是一段很长的说明文字，用于验证省略号是否把自身宽度计入宽度限制。",

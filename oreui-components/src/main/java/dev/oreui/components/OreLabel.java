@@ -1,7 +1,10 @@
 package dev.oreui.components;
 
+import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
 import dev.oreui.components.platform.TextMetrics;
+import dev.oreui.core.text.TextGeometry;
+import dev.oreui.core.text.TextMeasure;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.TypeRole;
 
@@ -15,6 +18,7 @@ public final class OreLabel extends OreWidget {
     private final int maxLines;
     private final TextAlign align;
     private List<String> lines = List.of();
+    private int glyphHeight;
 
     public OreLabel(ComponentContext context, IText text, TypeRole role, LabelOverflow overflow,
                     int maxWidth) {
@@ -46,6 +50,7 @@ public final class OreLabel extends OreWidget {
         float width = style().width();
         float maxWidth = Float.isNaN(width) ? 200f : width;
         TextMetrics metrics = context.textMeasurer().measure(text, role, maxWidth);
+        glyphHeight = metrics.glyphHeight();
         List<String> measured = metrics.lines();
         List<String> next = new ArrayList<>();
         if (measured.isEmpty()) {
@@ -54,22 +59,30 @@ public final class OreLabel extends OreWidget {
             for (int i = 0; i < Math.min(maxLines, measured.size()); i++) {
                 next.add(measured.get(i));
             }
-        } else {
-            String first = measured.get(0);
-            if (overflow == LabelOverflow.ELLIPSIS && measured.size() > 1) {
-                first = first + "…";
+        } else if (overflow == LabelOverflow.CLIP) {
+            String clipped = TextGeometry.ellipsize(context.textSource().resolve(text), maxWidth, measure());
+            if (clipped.endsWith(TextGeometry.ELLIPSIS)) {
+                clipped = clipped.substring(0, clipped.length() - TextGeometry.ELLIPSIS.length());
             }
-            next.add(first);
+            next.add(clipped);
+        } else {
+            next.add(TextGeometry.ellipsize(context.textSource().resolve(text), maxWidth, measure()));
         }
         lines = List.copyOf(next);
         style().height(lines.size() * context.theme().type(role).lineHeight());
         markDirty();
     }
 
+    private TextMeasure measure() {
+        return value -> context.textMeasurer()
+                .measure(new LiteralText(value.toString()), role, 0f).width();
+    }
+
     @Override
-    public void renderForeground(dev.oreui.components.platform.IRenderContext ctx) {
+    public void renderForeground(IRenderContext ctx) {
         ColorRole color = context.theme().type(role).color();
         float lineHeight = context.theme().type(role).lineHeight();
+        float glyphOffset = (lineHeight - glyphHeight) * 0.5f;
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             float width = context.textMeasurer()
@@ -80,7 +93,8 @@ public final class OreLabel extends OreWidget {
             } else if (align == TextAlign.END) {
                 x += bounds().width() - width;
             }
-            text(ctx, new LiteralText(line), x, bounds().y() + i * lineHeight, role, color);
+            textClipped(ctx, new LiteralText(line), x,
+                    bounds().y() + i * lineHeight + glyphOffset, role, color, bounds());
         }
     }
 }

@@ -75,4 +75,31 @@ class ControlsTest {
                 LabelOverflow.WRAP, 24);
         assertTrue(wrap.lines().size() > 1);
     }
+
+    @Test
+    void imeAcceptsBmpAndSurrogatePairs() {
+        OreTextField field = new OreTextField(TestFixtures.context(), InputValidation.TEXT, 16);
+        assertTrue(field.charTyped(0x4E2D));
+        assertEquals("中", field.text());
+        assertTrue(field.charTyped(0x1F600));
+        assertEquals(2, field.text().codePointCount(0, field.text().length()));
+        assertTrue(field.keyPressed(KeyCodes.BACKSPACE, 0));
+        assertEquals("中", field.text());
+    }
+
+    @Test
+    void wheelBubblesFromScrollContentToPane() {
+        ComponentContext context = TestFixtures.context();
+        OreSurface content = new OreSurface(context, SurfaceVariant.CARD);
+        content.style().width(100f).height(100f);
+        content.addChild(new OreLabel(context, TestFixtures.text("row"), TypeRole.BODY,
+                LabelOverflow.CLIP, 100));
+        OreScrollPane pane = new OreScrollPane(context, content, ScrollBarPolicy.ALWAYS);
+        pane.style().width(100f).height(20f);
+        ComponentTree tree = new ComponentTree(pane);
+        tree.layout(new Rect2f(0f, 0f, 100f, 20f));
+        float before = pane.scrollY();
+        assertTrue(tree.dispatch(new InputEvent(IInputEvent.Kind.WHEEL, 5f, 5f, 1, 0, 0)));
+        assertTrue(pane.scrollY() > before);
+    }
 }

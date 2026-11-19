@@ -120,7 +120,7 @@ public final class OreAccordion extends OreWidget {
         @Override
         public void renderForeground(IRenderContext ctx) {
             TextMetrics metrics = context.textMeasurer().measure(title, TypeRole.LABEL, 0f);
-            text(ctx, title, bounds().x() + 6f, bounds().y() + (bounds().height() - metrics.height()) * 0.5f,
+            text(ctx, title, bounds().x() + 6f, textCenterY(bounds().y(), bounds().height(), metrics),
                     TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
             float cx = bounds().right() - 12f;
             float cy = bounds().y() + bounds().height() * 0.5f - 2f;

@@ -132,7 +132,7 @@ public final class OrePanelFrame extends OreWidget {
         if (title != null) {
             TextMetrics metrics = context.textMeasurer().measure(title, TypeRole.LABEL, 0f);
             text(ctx, title, bounds().x() + 6f,
-                    bounds().y() + (TITLE_HEIGHT - metrics.height()) * 0.5f,
+                    textCenterY(bounds().y(), TITLE_HEIGHT, metrics),
                     TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
         }
         super.renderForeground(ctx);

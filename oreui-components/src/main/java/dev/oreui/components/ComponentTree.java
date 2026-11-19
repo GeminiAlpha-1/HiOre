@@ -38,10 +38,27 @@ public final class ComponentTree {
         return focused;
     }
 
+    public List<WidgetFailure> failures() {
+        List<WidgetFailure> failures = new ArrayList<>();
+        collectFailures(root, failures);
+        return List.copyOf(failures);
+    }
+
     public void layout(Rect2f viewport) {
-        engine.compute(viewport);
-        root.syncFrames();
+        if (root.isQuarantined()) {
+            return;
+        }
+        try {
+            engine.compute(viewport);
+            root.syncFrames();
+        } catch (Throwable throwable) {
+            root.quarantine("layout", throwable);
+            return;
+        }
         collectFocusables(root);
+        if (focused != null && focused.isQuarantined()) {
+            focused = null;
+        }
         if (!focusables.contains(focused)) {
             focused = focusables.isEmpty() ? null : focusables.get(0);
             if (focused != null) {
@@ -51,17 +68,44 @@ public final class ComponentTree {
     }
 
     public void update(float deltaSeconds) {
-        root.update(deltaSeconds);
+        if (root.isQuarantined()) {
+            return;
+        }
+        try {
+            root.update(deltaSeconds);
+        } catch (Throwable throwable) {
+            root.quarantine("update", throwable);
+        }
     }
 
     public void renderBackground(IRenderContext ctx) {
-        root.renderBackground(ctx);
-        overlayManager.renderBackground(ctx);
+        if (!root.isQuarantined()) {
+            try {
+                root.renderBackground(ctx);
+            } catch (Throwable throwable) {
+                root.quarantine("renderBackground", throwable);
+            }
+        }
+        try {
+            overlayManager.renderBackground(ctx);
+        } catch (Throwable throwable) {
+            root.quarantine("overlayBackground", throwable);
+        }
     }
 
     public void renderForeground(IRenderContext ctx) {
-        root.renderForeground(ctx);
-        overlayManager.renderForeground(ctx);
+        if (!root.isQuarantined()) {
+            try {
+                root.renderForeground(ctx);
+            } catch (Throwable throwable) {
+                root.quarantine("renderForeground", throwable);
+            }
+        }
+        try {
+            overlayManager.renderForeground(ctx);
+        } catch (Throwable throwable) {
+            root.quarantine("overlayForeground", throwable);
+        }
     }
 
     public boolean dispatch(IInputEvent event) {
@@ -81,7 +125,13 @@ public final class ComponentTree {
                 if (target.isFocusable()) {
                     setFocused(target);
                 }
-                boolean capture = target.pointerDown(event.x(), event.y());
+                boolean capture;
+                try {
+                    capture = target.pointerDown(event.x(), event.y());
+                } catch (Throwable throwable) {
+                    target.quarantine("pointerDown", throwable);
+                    return false;
+                }
                 if (capture) {
                     captured = target;
                 }
@@ -89,7 +139,13 @@ public final class ComponentTree {
             }
             case POINTER_MOVE -> {
                 if (captured != null) {
-                    return captured.pointerMove(event.x(), event.y());
+                    try {
+                        return captured.pointerMove(event.x(), event.y());
+                    } catch (Throwable throwable) {
+                        captured.quarantine("pointerMove", throwable);
+                        captured = null;
+                        return false;
+                    }
                 }
                 updateHover(root.hitTest(event.x(), event.y()));
                 return false;
@@ -97,20 +153,56 @@ public final class ComponentTree {
             case POINTER_UP -> {
                 OreWidget target = captured != null ? captured : root.hitTest(event.x(), event.y());
                 captured = null;
-                return target != null && target.pointerUp(event.x(), event.y());
+                if (target == null) {
+                    return false;
+                }
+                try {
+                    return target.pointerUp(event.x(), event.y());
+                } catch (Throwable throwable) {
+                    target.quarantine("pointerUp", throwable);
+                    return false;
+                }
             }
             case KEY_DOWN -> {
                 if (event.code() == KeyCodes.TAB) {
                     return focusNext();
                 }
-                return focused != null && focused.keyPressed(event.code(), event.modifiers());
+                if (focused == null) {
+                    return false;
+                }
+                try {
+                    return focused.keyPressed(event.code(), event.modifiers());
+                } catch (Throwable throwable) {
+                    focused.quarantine("keyPressed", throwable);
+                    return false;
+                }
             }
             case CHAR_TYPED -> {
-                return focused != null && focused.charTyped(event.character());
+                if (focused == null) {
+                    return false;
+                }
+                try {
+                    return focused.charTyped(event.character());
+                } catch (Throwable throwable) {
+                    focused.quarantine("charTyped", throwable);
+                    return false;
+                }
             }
             case WHEEL -> {
                 OreWidget target = captured != null ? captured : root.hitTest(event.x(), event.y());
-                return target != null && target.wheel(event.code());
+                for (OreWidget current = target; current != null; current = current.parent()) {
+                    if (current.isQuarantined()) {
+                        continue;
+                    }
+                    try {
+                        if (current.wheel(event.code())) {
+                            return true;
+                        }
+                    } catch (Throwable throwable) {
+                        current.quarantine("wheel", throwable);
+                    }
+                }
+                return false;
             }
             default -> {
                 return false;
@@ -142,6 +234,9 @@ public final class ComponentTree {
     }
 
     private void setFocused(OreWidget target) {
+        if (target != null && target.isQuarantined()) {
+            return;
+        }
         if (focused == target) {
             return;
         }
@@ -160,11 +255,23 @@ public final class ComponentTree {
     }
 
     private void collect(OreWidget widget) {
+        if (widget.isQuarantined()) {
+            return;
+        }
         if (widget.isFocusable()) {
             focusables.add(widget);
         }
         for (OreWidget child : widget.children()) {
             collect(child);
+        }
+    }
+
+    private void collectFailures(OreWidget widget, List<WidgetFailure> failures) {
+        if (widget.failure() != null) {
+            failures.add(widget.failure());
+        }
+        for (OreWidget child : widget.children()) {
+            collectFailures(child, failures);
         }
     }
 }

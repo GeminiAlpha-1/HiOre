@@ -92,6 +92,8 @@ public final class OreSlider extends OreInteractive {
         float knobX = x + (w - 8f) * value;
         fill(ctx, ColorRole.SLIDER_KNOB, knobX, bounds().y() + 2f, 8f, 12f);
         outline(ctx, ColorRole.BORDER_OUTER, knobX, bounds().y() + 2f, 8f, 12f, 1f);
+        fill(ctx, ColorRole.BEVEL_LIGHT, knobX + 1f, bounds().y() + 3f, 6f, 1f);
+        fill(ctx, ColorRole.BEVEL_DARK, knobX + 1f, bounds().y() + 12f, 6f, 1f);
         drawFocus(ctx);
     }
 }

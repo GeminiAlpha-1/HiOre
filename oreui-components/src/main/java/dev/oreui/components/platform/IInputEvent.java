@@ -11,7 +11,7 @@ public interface IInputEvent {
 
     int modifiers();
 
-    char character();
+    int character();
 
     enum Kind {
         POINTER_MOVE,

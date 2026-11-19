@@ -2,6 +2,7 @@ package dev.oreui.components;
 
 import dev.oreui.components.platform.IRenderContext;
 import dev.oreui.components.platform.IText;
+import dev.oreui.components.platform.TextMetrics;
 import dev.oreui.core.geom.Rect2f;
 import dev.oreui.theme.ColorRole;
 import dev.oreui.theme.TypeRole;
@@ -79,11 +80,15 @@ public final class OreModal extends OreWidget {
         Rect2f area = area();
         float w = Math.min(220f, area.width() - 16f);
         float h = Math.min(modalSize == ModalSize.FULLSCREEN ? area.height() - 16f : 100f, area.height() - 16f);
-        float x = area.x() + (area.width() - w) * 0.5f + 12f;
-        float y = area.y() + (area.height() - h) * 0.5f + 12f;
-        text(ctx, title, x, y, TypeRole.TITLE, ColorRole.TEXT_PRIMARY);
-        text(ctx, body, x, y + 26f, TypeRole.BODY, ColorRole.TEXT_SECONDARY);
-        text(ctx, new LiteralText("OK"), x + w - 42f, y + h - 21f, TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
+        float modalX = area.x() + (area.width() - w) * 0.5f;
+        float modalY = area.y() + (area.height() - h) * 0.5f;
+        text(ctx, title, modalX + 12f, modalY + 12f, TypeRole.TITLE, ColorRole.TEXT_PRIMARY);
+        text(ctx, body, modalX + 12f, modalY + 38f, TypeRole.BODY, ColorRole.TEXT_SECONDARY);
+        TextMetrics okMetrics = context.textMeasurer()
+                .measure(new LiteralText("OK"), TypeRole.LABEL, 0f);
+        float okX = modalX + w - 70f + (60f - okMetrics.width()) * 0.5f;
+        float okY = textCenterY(modalY + h - 26f, 18f, okMetrics);
+        text(ctx, new LiteralText("OK"), okX, okY, TypeRole.LABEL, ColorRole.TEXT_PRIMARY);
     }
 
     public ModalSize modalSize() {
