@@ -61,10 +61,9 @@ public final class Fabric26GameObjectRenderer implements IGameObjectRenderer {
                     handle == null ? "null" : handle.getClass().getName());
             return;
         }
-        float oreScale = OreGuiScale.renderScale();
         requireExtractor().blitSprite(RenderPipelines.GUI_TEXTURED, fluid.sprite(),
-                Math.round(rect.x() * oreScale), Math.round(rect.y() * oreScale),
-                Math.round(rect.width() * oreScale), Math.round(rect.height() * oreScale));
+                Math.round(rect.x()), Math.round(rect.y()),
+                Math.round(rect.width()), Math.round(rect.height()));
     }
 
     @Override
